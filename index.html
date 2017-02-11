@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="css/main.css" type="text/css">
+    
+    <title>DTX Charter 1.00</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="top-bar"></div>
+        <div class="navbar-header">            
+            <a class="navbar-brand" href="index.html">
+              <span>DTX Charter</span>
+          </a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                 <ul class="nav navbar-nav">                  
+                  <li>
+                    <form>
+                     <input id='openFile' type="file" accept=".dtx,.gda" style="visibility: hidden; display:none;">
+                    </form>
+                    <button id='Open' class="btn btn-default navbar-btn">Open File...</button>
+                  </li>
+                  <li><p class="navbar-text">Select a scale factor</p></li>                     
+                  <li><select id="SelectScaleFactor" class="btn btn-primary navbar-btn">
+                        <option value="0.50">0.50</option>
+                        <option value="0.75">0.75</option>
+                        <option value="1.00" selected="selected">1.00</option>
+                        <option value="1.25">1.25</option>
+                        <option value="1.50">1.50</option>
+                        <option value="1.75">1.75</option>
+                        <option value="2.00">2.00</option>
+                        <option value="2.25">2.25</option>
+                        <option value="2.50">2.50</option>
+                      </select>
+                  </li> 
+                  <li><p class="navbar-text">Page height</p></li>    
+                  <li><select id="SelectPageHeight" class="btn btn-primary navbar-btn">
+                      <option value="480">480</option>
+                      <option value="720" selected="selected">720</option>
+                      <option value="960">960</option>
+                      <option value="1440">1440</option>
+                      <option value="1920">1920</option>
+                      <option value="2400">2400</option>
+                      <option value="2880">2880</option>
+                      <option value="3360">3360</option>
+                      <option value="3840">3840</option>
+                    </select>
+                  </li>
+                  <li><p class="navbar-text">Page per canvas</p></li>    
+                  <li><select id="SelectPagePerCanvas" class="btn btn-primary navbar-btn">
+                      <option value="4" selected="selected">4</option>
+                      <option value="6">6</option>
+                      <option value="8">8</option>
+                      <option value="12">12</option>
+                      <option value="16">16</option>
+                      <option value="20">20</option>
+                      <option value="24">24</option>                      
+                    </select>
+                  </li>
+                  <li><p class="navbar-text">  </p></li>
+                  <li><button id='Draw' class="btn btn-default navbar-btn">Re-Draw</button></li>
+                  <li><p class="navbar-text">  </p></li>  
+                  <li><button id='Clear' class="btn btn-default navbar-btn">Clear</button></li>
+                  <li><p class="navbar-text">Right click on canvas and select 'Save Image as...' to download image</p></li>   
+                  </ul>               
+            </div>
+      </nav>
+    <div class="container-fluid">
+        <div class="row" id="placeholder">
+          <div class="col-md-10 canvasSheetContainer">
+          </div>
+        </div>
+        <div id="chart_container">
+        </div>
+    </div>
+    <footer>
+            Copyright © 2017, DTX Charter
+    </footer>
+    <script src="bower_components/jquery/dist/jquery.min.js" type="text/javascript"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="bower_components/fabric.js/dist/fabric.min.js" type="text/javascript"></script>
+    <script src="js/dtxchart.parser.js"></script>
+    <script src="js/dtxchart.canvasEngine_Fabric.js"></script>
+    <script src="js/dtxchart.charter.js"></script>    
+    <script src="js/dtxchart.linePositionMapper.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>
