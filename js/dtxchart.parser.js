@@ -52,7 +52,8 @@ var DtxChart = (function(mod){
 		}
         //Check if header is supported
 		if(!checkSupportedHeader(lines[0])){
-            return;
+            console.warn('Warning: Header not supported or header is missing. Parsing may fail');
+            //return;
         }
         
         //Start processing all valid lines
@@ -399,10 +400,6 @@ var DtxChart = (function(mod){
 				break;
 			}
 		};
-		//if(HEADER !== trimLine){
-		if(!headerCheckPassed){	
-			console.error('Fail to parse: Header not supported');
-		}
         
         return headerCheckPassed;
     }
