@@ -1,0 +1,28 @@
+body {
+    background-color: #333333;
+	margin-top: 60px;
+}
+
+.top-bar{
+	height:5px;
+    background:#333333;
+    margin-bottom:1px;
+}
+
+footer{
+    text-align: center;
+    padding:10px 0;
+    font-weight:bold;
+    background:#e1e1e1;
+	width: 100%;
+	bottom: 0px;
+}
+
+.navbar{
+	margin-bottom: 1px;
+}
+
+.canvasSheetContainer{
+	overflow: auto;
+	height:855px;
+}
