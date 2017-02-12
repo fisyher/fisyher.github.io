@@ -421,7 +421,7 @@ var DtxChart = (function(mod){
             text += " - " + chartInfo.artist + "     ";
         }
         //
-        text += "Level: " + chartInfo.level + "  BPM: " + chartInfo.bpm + "  Notes: " + totalNoteCount;
+        text += "Level: " + chartInfo.level + "  BPM: " + chartInfo.bpm + "  Total Notes: " + totalNoteCount;
 
         //Repeat for every sheet available
         for(var i in this._chartSheets){
@@ -436,7 +436,7 @@ var DtxChart = (function(mod){
                                 fill: DtxTextColor.ChartInfo,
                                 fontSize: DtxFontSizes.ChartInfo,
                                 fontFamily: "Arial",
-                                originY: "bottom",
+                                originY: "bottom"
                             });
             this._chartSheets[i].addLine({x: DtxChartCanvasMargins.C,
                                 y: DtxChartCanvasMargins.A,

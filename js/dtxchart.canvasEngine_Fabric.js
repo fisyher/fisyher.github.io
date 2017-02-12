@@ -56,6 +56,7 @@ var DtxChart = (function(mod){
     function addRectangle(positionSize, drawOptions){
         var rect = new fabric.Rect({
 			  fill: drawOptions.fill,
+              originY: drawOptions.originY,
 			  width: positionSize.width,
 			  height: positionSize.height,
 			  left: positionSize.x,
@@ -95,8 +96,10 @@ var DtxChart = (function(mod){
             top: positionSize.y,
             fill: textOptions.fill ? textOptions.fill : "#ffffff",
             fontSize: textOptions.fontSize ? textOptions.fontSize : 20,
+            fontWeight: textOptions.fontWeight ? textOptions.fontWeight : "",
             fontFamily: textOptions.fontFamily ? textOptions.fontFamily : "Times New Roman",
-            originY: textOptions.originY ? textOptions.originY : "center"
+            originY: textOptions.originY ? textOptions.originY : "center",
+            originX: textOptions.originX ? textOptions.originX : "left"
         });
 
         this._canvasObject.add(textObject);

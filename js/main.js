@@ -18,11 +18,20 @@ $(document).ready(function(){
 	var currDtxObject = null;
 	var dtxdataObject = null;
 	var lineMapper = null;
+	var graph = null;
 
 	//
 	function createCanvasSheets(canvasConfigArray){
 		for(var i in canvasConfigArray){
-			$("#chart_container").append('<div class="row"><div class="col-md-10 canvasSheetContainer"><canvas id="'+ canvasConfigArray[i].elementId +'"></canvas></div></div>');
+			var index = parseInt(i);
+			if(index === 0)
+			{
+				$("#chart_container").append('<div class="row"><div class="col-md-12 canvasSheetContainer"><canvas id="'+ canvasConfigArray[i].elementId +'"></canvas><canvas id="dtxgraph"></canvas></div></div>');
+			}
+			else{
+				$("#chart_container").append('<div class="row"><div class="col-md-12 canvasSheetContainer"><canvas id="'+ canvasConfigArray[i].elementId +'"></canvas></div></div>');
+			}
+			
 		}
 	}
 
@@ -49,12 +58,15 @@ $(document).ready(function(){
 
 		//
 		var canvasConfigArray = charter2.canvasRequired();
-		console.log("Required canvas count: ",canvasConfigArray.length);
+		//console.log("Required canvas count: ",canvasConfigArray.length);
 		//
 		createCanvasSheets(canvasConfigArray);	
 
 		charter2.setCanvasArray(canvasConfigArray);
 		charter2.drawDTXChart();	
+		//Draw graph last
+		graph = new DtxChart.Graph(dtxdataObject, "dtxgraph");
+		graph.drawGraph();
 	});
 
 	$('#Clear').click(function(e){
@@ -98,6 +110,7 @@ $(document).ready(function(){
 						pagePerCanvas: parseInt( $('#SelectPagePerCanvas').val())
 					});
 
+					
 					//
 					var canvasConfigArray = charter2.canvasRequired();
 					console.log("Required canvas count: ",canvasConfigArray.length);
@@ -111,6 +124,10 @@ $(document).ready(function(){
 					//canvasConfigArray[0].backgroundColor = "#000000";					
 					charter2.setCanvasArray(canvasConfigArray);
 					charter2.drawDTXChart();
+					
+					//Draw graph last
+					graph = new DtxChart.Graph(dtxdataObject, "dtxgraph");
+					graph.drawGraph();
 				}				
 			}
 			r.readAsText(f,encoding);
