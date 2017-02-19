@@ -5,7 +5,8 @@ var DtxChart = (function(mod){
     'use strict';
     var VERSION = "2.0.0";
 
-    var SUPPORTED_HEADERS = ["; Created by DTXCreator 024",
+    var SUPPORTED_HEADERS = [
+    "; Created by DTXCreator 024",
 	"; Created by DTXCreator 025(verK)",
 	"; Created by DTXCreator 020",
 	";Created by GDA Creator Professional Ver.0.10",

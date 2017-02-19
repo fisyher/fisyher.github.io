@@ -30,8 +30,8 @@ var DtxChart = (function(mod){
 
     //A collection of width/height constants for positioning purposes. Refer to diagram for details 
     var DtxChartCanvasMargins = {
-        "A": 45,//Info section height
-        "B": 16,//Top margin of page
+        "A": 30,//Info section height
+        "B": 31,//Top margin of page
         "C": 30,//Left margin of chart
         "D": 30,//Right margin of chart
         "E": 40,//Bottom margin of page
@@ -111,9 +111,14 @@ var DtxChart = (function(mod){
     var DtxFontSizes = {
         "BarNumber": 16,
         "BpmMarker": 12,
-        "ChartInfo": 28,
+        "Title": 24,
+        "Artist": 14,
+        "ChartInfo": 18,
         "PageNumber": 16
     };
+
+    var DtxMaxTitleWidth = (DtxChartPageMarkerHorizontalPositions.width + DtxChartCanvasMargins.F)*2 + DtxChartCanvasMargins.C;
+    var DtxMaxArtistWidth = DtxMaxTitleWidth;
 
     /** 
      * Constructor of Charter
@@ -412,16 +417,16 @@ var DtxChart = (function(mod){
 
     Charter.prototype.drawChartInfo = function(chartInfo, totalNoteCount){
         
-        //Form the text to be printed
-        var text = chartInfo.title;
-        if(chartInfo.artist === ""){
-            text += "   ";
-        }
-        else{
-            text += " - " + chartInfo.artist + "     ";
-        }
-        //
-        text += "Level: " + chartInfo.level + "  BPM: " + chartInfo.bpm + "  Total Notes: " + totalNoteCount;
+        var songLength = this._positionMapper.estimateSongDuration();
+
+        var songMinutes = Math.floor(songLength/60) + "";
+        var songSeconds = Math.round(songLength%60).toFixed(0);
+        songSeconds = songSeconds < 10 ? "0" + songSeconds : "" + songSeconds;//Convert to string with fixed 2 characters
+        
+        var otherInfo = "LV:" + chartInfo.level + "  BPM:" + chartInfo.bpm + "  Length:" + songMinutes + ":" + songSeconds +"  Total Notes:" + totalNoteCount;
+
+        var otherInfoPosX = DtxChartCanvasMargins.C + 
+        ( DtxChartPageMarkerHorizontalPositions.width + DtxChartCanvasMargins.F ) * 4;//Information appears at 4 page wide
 
         //Repeat for every sheet available
         for(var i in this._chartSheets){
@@ -431,20 +436,47 @@ var DtxChart = (function(mod){
             }
             this._chartSheets[i].addText({
                                 x: DtxChartCanvasMargins.C,
-                                y: DtxChartCanvasMargins.A - 0, //A is the Line divider, The text will be slightly above it
-                                }, text, {
+                                y: DtxChartCanvasMargins.A - 0, //A is the Line divider, The Title text will be slightly above it
+                                width: DtxMaxTitleWidth
+                                }, chartInfo.title, {
                                 fill: DtxTextColor.ChartInfo,
-                                fontSize: DtxFontSizes.ChartInfo,
+                                fontSize: DtxFontSizes.Title,
                                 fontFamily: "Arial",
                                 originY: "bottom"
                             });
+
+            if(chartInfo.artist && chartInfo.artist !== ""){
+                this._chartSheets[i].addText({
+                                x: DtxChartCanvasMargins.C + 10,
+                                y: DtxChartCanvasMargins.A + 20, //A is the Line divider, The Artist text will be slightly below it
+                                width: DtxMaxArtistWidth
+                                }, chartInfo.artist, {
+                                fill: DtxTextColor.ChartInfo,
+                                fontSize: DtxFontSizes.Artist,
+                                fontFamily: "Arial",
+                                originY: "bottom"
+                            });
+            }
+            
+
+            this._chartSheets[i].addText({
+                                x: otherInfoPosX,
+                                y: DtxChartCanvasMargins.A - 0 //A is the Line divider, The Info text will be slightly above it
+                                }, otherInfo, {
+                                fill: DtxTextColor.ChartInfo,
+                                fontSize: DtxFontSizes.ChartInfo,
+                                fontFamily: "Arial",
+                                originY: "bottom",
+                                originX: "right"
+                            });
+
             this._chartSheets[i].addLine({x: DtxChartCanvasMargins.C,
                                 y: DtxChartCanvasMargins.A,
                                 width:  this._chartSheets[i].canvasWidthHeightPages().width - DtxChartCanvasMargins.C - DtxChartCanvasMargins.D,
                                 height: 0
                                 }, {
                                     stroke: DtxBarLineColor.TitleLine,
-		                            strokeWidth: 3,
+		                            strokeWidth: 2,
                                 });
         }
     };

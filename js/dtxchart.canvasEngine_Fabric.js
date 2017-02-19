@@ -102,6 +102,11 @@ var DtxChart = (function(mod){
             originX: textOptions.originX ? textOptions.originX : "left"
         });
 
+        var currTextWidth = textObject.width;
+        if(positionSize.width && currTextWidth >  positionSize.width){
+            textObject.scaleToWidth(positionSize.width); //positionSize.width/currTextWidth required for fabric 1.7.6! But why? getBoundingRectWidth also return wrong value for text object
+        }
+
         this._canvasObject.add(textObject);
     }
 
