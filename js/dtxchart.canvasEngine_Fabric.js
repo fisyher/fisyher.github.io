@@ -104,7 +104,7 @@ var DtxChart = (function(mod){
 
         var currTextWidth = textObject.width;
         if(positionSize.width && currTextWidth >  positionSize.width){
-            textObject.scaleToWidth(positionSize.width); //positionSize.width/currTextWidth required for fabric 1.7.6! But why? getBoundingRectWidth also return wrong value for text object
+            textObject.scaleToWidth(positionSize.width); //positionSize.width/currTextWidth required for laptop browser but why? Scale becomes relative??? Behaviour different from jsfiddle...
         }
 
         this._canvasObject.add(textObject);
@@ -123,6 +123,10 @@ var DtxChart = (function(mod){
         this._canvasObject.renderAll();
     }
 
+    function setZoom(factor){
+        this._canvasObject.setZoom(factor);
+    }
+
    //
     mod.CanvasEngine = {
         createCanvas: createCanvas,
@@ -130,6 +134,7 @@ var DtxChart = (function(mod){
         addRectangle: addRectangle,
         addLine: addLine,
         addText: addText,
+        setZoom: setZoom,
         clear: clear,
         update: update
     };

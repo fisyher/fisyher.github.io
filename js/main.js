@@ -26,10 +26,10 @@ $(document).ready(function(){
 			var index = parseInt(i);
 			if(index === 0)
 			{
-				$("#chart_container").append('<div class="row"><div class="col-md-12 canvasSheetContainer"><canvas id="'+ canvasConfigArray[i].elementId +'"></canvas><canvas id="dtxgraph"></canvas></div></div>');
+				$("#chart_container").append('<div class="row"><div class="col-md-12 col-sm-12 col-xs-12 canvasSheetContainer"><canvas id="'+ canvasConfigArray[i].elementId +'"></canvas><canvas id="dtxgraph"></canvas></div></div>');
 			}
 			else{
-				$("#chart_container").append('<div class="row"><div class="col-md-12 canvasSheetContainer"><canvas id="'+ canvasConfigArray[i].elementId +'"></canvas></div></div>');
+				$("#chart_container").append('<div class="row"><div class="col-md-12 col-sm-12 col-xs-12 canvasSheetContainer"><canvas id="'+ canvasConfigArray[i].elementId +'"></canvas></div></div>');
 			}
 			
 		}

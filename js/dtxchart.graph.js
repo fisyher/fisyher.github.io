@@ -34,7 +34,7 @@ var DtxChart = (function(mod){
     var TOTAL_COUNT_FONT_SIZE = 32;
     var TOTAL_COUNTLABEL_FONT_SIZE = 16;
     var GRAPH_CANVAS_HEIGHT = 845;
-    var GRAPH_CANVAS_WIDTH = 450;
+    var GRAPH_CANVAS_WIDTH = 425;
     var DtxGraphMargins = {
         "B": 80,
         "C": 20,
