@@ -53,7 +53,8 @@ $(document).ready(function(){
 		charter2.setConfig({
 			scale: parseFloat( $('#SelectScaleFactor').val() ),
 			pageHeight: parseInt( $('#SelectPageHeight').val() ),
-			pagePerCanvas: parseInt( $('#SelectPagePerCanvas').val())
+			pagePerCanvas: parseInt( $('#SelectPagePerCanvas').val()),
+			chartType: $('#SelectMode').val()
 		});
 
 		//
@@ -107,7 +108,8 @@ $(document).ready(function(){
 					charter2.setConfig({
 						scale: parseFloat( $('#SelectScaleFactor').val() ),
 						pageHeight: parseInt( $('#SelectPageHeight').val() ),
-						pagePerCanvas: parseInt( $('#SelectPagePerCanvas').val())
+						pagePerCanvas: parseInt( $('#SelectPagePerCanvas').val()),
+						chartType: $('#SelectMode').val()
 					});
 
 					
