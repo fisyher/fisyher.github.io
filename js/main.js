@@ -54,7 +54,8 @@ $(document).ready(function(){
 			scale: parseFloat( $('#SelectScaleFactor').val() ),
 			pageHeight: parseInt( $('#SelectPageHeight').val() ),
 			pagePerCanvas: parseInt( $('#SelectPagePerCanvas').val()),
-			chartType: $('#SelectMode').val()
+			chartType: $('#SelectMode').val(),
+			barAligned : true//Test
 		});
 
 		//
@@ -109,7 +110,8 @@ $(document).ready(function(){
 						scale: parseFloat( $('#SelectScaleFactor').val() ),
 						pageHeight: parseInt( $('#SelectPageHeight').val() ),
 						pagePerCanvas: parseInt( $('#SelectPagePerCanvas').val()),
-						chartType: $('#SelectMode').val()
+						chartType: $('#SelectMode').val(),
+						barAligned : true//Test
 					});
 
 					
