@@ -22,13 +22,43 @@ footer{
 	margin-bottom: 1px;
 }
 
+.nav-tabs{
+    background-color:#000000;
+}
+.nav-tabs > li > a{
+    color: #ffff00;
+}
+
+.nav-tabs > li > a:hover{
+    color:#746510;
+}
+
+.nav-tabs > li.active > a{
+    color:#0000ff;
+}
+.nav-tabs > li.active > a:focus{
+    color:#0000ff;
+}
+
+.tab-content{
+    background-color:#333333;
+}
+
 .canvasSheetContainer{
 	overflow: auto;
 	height:850px;
-    padding-left: 0px;
-    padding-right: 0px;
+    /*padding-left: 0px;
+    padding-right: 0px;*/
     margin-top: 5px;
     margin-bottom: 5px;
+}
+
+.canvasSheetContainer > h2{
+    color: white;
+}
+
+.canvasSheetContainer > p{
+    color: white;
 }
 
 #dtxgraph{

@@ -10,7 +10,7 @@ var DtxChart = (function(mod){
         return mod;
     }
 
-
+    //var drumsChipImageSet = {};
     //CanvasEngine act as abstract interface to the actual canvas library
     
     /**
@@ -40,8 +40,23 @@ var DtxChart = (function(mod){
         return canvas;
     }
 
-    function addChip(positionSize, drawOptions){
-        var rect = new fabric.Rect({
+    function addChip(positionSize, drawOptions, imgObject){
+        if(imgObject){
+            var rect = new fabric.Rect({
+			  fill: drawOptions.fill,
+			  width: imgObject.width,
+			  height: imgObject.height,
+              left: positionSize.x,
+              top: positionSize.y,
+			  originY: 'center'
+			});
+            rect.setPatternFill({
+                source: imgObject,
+                repeat: 'no-repeat'
+            });            
+        }
+        else {
+            var rect = new fabric.Rect({
 			  fill: drawOptions.fill,
 			  width: positionSize.width,
 			  height: positionSize.height,
@@ -49,7 +64,7 @@ var DtxChart = (function(mod){
               top: positionSize.y,
 			  originY: 'center'
 			});
-        
+        }
         this._canvasObject.add(rect);
     }
 
@@ -127,8 +142,15 @@ var DtxChart = (function(mod){
         this._canvasObject.setZoom(factor);
     }
 
+    function loadChipImageAssets(url, laneLabel){
+        var self = this;
+        fabric.util.loadImage(url, function (img) {            
+            self[laneLabel] = img;           
+        });
+    }
    //
     mod.CanvasEngine = {
+        loadChipImageAssets: loadChipImageAssets,
         createCanvas: createCanvas,
         addChip: addChip,
         addRectangle: addRectangle,

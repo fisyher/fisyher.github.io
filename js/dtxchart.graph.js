@@ -57,7 +57,7 @@ var DtxChart = (function(mod){
      * Parameters:
      * dtxData - The dtxData object
      * canvasID - The id of the canvas element used to draw the graph. If not provided, defaults to "dtxgraph"
-     * option - Option <string> to choose which type of graph to draw. Valid options are "full", "LP+LB", "RC+RD", "Gitadora". Defaults to "Gitadora" 
+     * option - Option <string> to choose which type of graph to draw. Valid options are "full", "LP+LB", "RC+RD", "Gitadora", "Vmix". Defaults to "Gitadora" 
      */
     function Graph(dtxData, canvasID, option){
         
@@ -67,11 +67,11 @@ var DtxChart = (function(mod){
                     "backgroundColor": "#111111",
                     "elementId": canvasID ? canvasID : "dtxgraph"
                 };
-        this._graphOption = option? option : "Gitadora";//full, LP+LB, RC+RD, Gitadora 
+        this._graphOption = option? option : "Gitadora";//full, LP+LB, RC+RD, Gitadora, Vmix 
 
         //this._metadata = dtxData.metadata;
 
-        convertMetadata.call(this, dtxData.metadata, this._graphOption);
+        convertMetadata.call(this, dtxData.metadata.drum, this._graphOption);
 
         //this._dtxData = dtxData;
         if(CanvasEngine){
@@ -81,63 +81,85 @@ var DtxChart = (function(mod){
 
     //Another way to express private function?
     function convertMetadata(metadata, option){
+        
+        var l_metadata;
+        if(metadata){
+            l_metadata = metadata;
+        }
+        else{
+            l_metadata = {
+                "totalNoteCount": 0,
+                "LC_Count": 0,
+                "HH_Count": 0,
+                "LP_Count": 0,
+                "LB_Count": 0,
+                "SD_Count": 0,
+                "HT_Count": 0,
+                "BD_Count": 0,
+                "LT_Count": 0,
+                "FT_Count": 0,
+                "RC_Count": 0,
+                "RD_Count": 0
+            };
+        }
+        
         if(option === "full"){
             this._metadata = {};
-            for(var prop in metadata){
-                if(metadata.hasOwnProperty(prop)){
-                    this._metadata[prop] = metadata[prop];
+            for(var prop in l_metadata){
+                if(l_metadata.hasOwnProperty(prop)){
+                    this._metadata[prop] = l_metadata[prop];
                 }
             }
         }
         else if(option === "LP+LB"){
             this._metadata = {
-                "totalNoteCount": metadata.totalNoteCount,
-                "LC_Count": metadata.LC_Count,
-                "HH_Count": metadata.HH_Count,
-                "LP_Count": metadata.LP_Count + metadata.LB_Count,
-                "SD_Count": metadata.SD_Count,
-                "HT_Count": metadata.HT_Count,
-                "BD_Count": metadata.BD_Count,
-                "LT_Count": metadata.LT_Count,
-                "FT_Count": metadata.FT_Count,
-                "RC_Count": metadata.RC_Count,
-                "RD_Count": metadata.RD_Count
+                "totalNoteCount": l_metadata.totalNoteCount,
+                "LC_Count": l_metadata.LC_Count,
+                "HH_Count": l_metadata.HH_Count,
+                "LP_Count": l_metadata.LP_Count + l_metadata.LB_Count,
+                "SD_Count": l_metadata.SD_Count,
+                "HT_Count": l_metadata.HT_Count,
+                "BD_Count": l_metadata.BD_Count,
+                "LT_Count": l_metadata.LT_Count,
+                "FT_Count": l_metadata.FT_Count,
+                "RC_Count": l_metadata.RC_Count,
+                "RD_Count": l_metadata.RD_Count
             };
         }
         else if(option === "RC+RD"){
             this._metadata = {
-                "totalNoteCount": metadata.totalNoteCount,
-                "LC_Count": metadata.LC_Count,
-                "HH_Count": metadata.HH_Count,
-                "LP_Count": metadata.LP_Count,
-                "LB_Count": metadata.LB_Count,
-                "SD_Count": metadata.SD_Count,
-                "HT_Count": metadata.HT_Count,
-                "BD_Count": metadata.BD_Count,
-                "LT_Count": metadata.LT_Count,
-                "FT_Count": metadata.FT_Count,
-                "RC_Count": metadata.RC_Count + metadata.RD_Count
+                "totalNoteCount": l_metadata.totalNoteCount,
+                "LC_Count": l_metadata.LC_Count,
+                "HH_Count": l_metadata.HH_Count,
+                "LP_Count": l_metadata.LP_Count,
+                "LB_Count": l_metadata.LB_Count,
+                "SD_Count": l_metadata.SD_Count,
+                "HT_Count": l_metadata.HT_Count,
+                "BD_Count": l_metadata.BD_Count,
+                "LT_Count": l_metadata.LT_Count,
+                "FT_Count": l_metadata.FT_Count,
+                "RC_Count": l_metadata.RC_Count + l_metadata.RD_Count
             };
         }
         else if(option === "Gitadora"){
             this._metadata = {
-                "totalNoteCount": metadata.totalNoteCount,
-                "LC_Count": metadata.LC_Count,
-                "HH_Count": metadata.HH_Count,
-                "LP_Count": metadata.LP_Count + metadata.LB_Count,
-                "SD_Count": metadata.SD_Count,
-                "HT_Count": metadata.HT_Count,
-                "BD_Count": metadata.BD_Count,
-                "LT_Count": metadata.LT_Count,
-                "FT_Count": metadata.FT_Count,
-                "RC_Count": metadata.RC_Count + metadata.RD_Count
+                "totalNoteCount": l_metadata.totalNoteCount,
+                "LC_Count": l_metadata.LC_Count,
+                "HH_Count": l_metadata.HH_Count,
+                "LP_Count": l_metadata.LP_Count + l_metadata.LB_Count,
+                "SD_Count": l_metadata.SD_Count,
+                "HT_Count": l_metadata.HT_Count,
+                "BD_Count": l_metadata.BD_Count,
+                "LT_Count": l_metadata.LT_Count,
+                "FT_Count": l_metadata.FT_Count,
+                "RC_Count": l_metadata.RC_Count + l_metadata.RD_Count
             };
         }
         else{//All invalid option will be converted to "full"
             this._metadata = {};
-            for(var prop in metadata){
-                if(metadata.hasOwnProperty(prop)){
-                    this._metadata[prop] = metadata[prop];
+            for(var prop in l_metadata){
+                if(l_metadata.hasOwnProperty(prop)){
+                    this._metadata[prop] = l_metadata[prop];
                 }
             }
             this._graphOption = "full";
