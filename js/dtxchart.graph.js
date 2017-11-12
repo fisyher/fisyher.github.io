@@ -10,41 +10,49 @@ var DtxChart = (function(mod){
     }
 
     var DtxGraphLaneColor = {
-        "LC_Count":"#ff4ca1",
-		"HH_Count":"#00ffff",
-        "LB_Count":"#e7baff",
-		"LP_Count":"#ffd3f0",
-		"SD_Count":"#fff040",
-		"HT_Count":"#00ff00",
-		"BD_Count":"#e7baff",
+        "LC_Count":"#ff1f7b",
+		"HH_Count":"#6ac0ff",
+        "LB_Count":"#ff4bed",
+		"LP_Count":"#ff4bed",
+		"SD_Count":"#fcfe16",
+		"HT_Count":"#02ff00",
+		"BD_Count":"#9b81ff",
 		"LT_Count":"#ff0000",
-		"FT_Count":"#fea101",
+		"FT_Count":"#ffa919",
 		"RC_Count":"#00ccff",
-		"RD_Count":"#5a9cf9",
+		"RD_Count":"#5eb5ff",
+		"Empty":"#2f2f2f"
     };
+	var DTX_EMPTY_LANE = "Empty";
 
     var DtxGraphTextColor = {
         "LaneNoteCount":"#ffffff",
         "OtherText": "#ffffff",
         "BaseLine": "#b7b7b7"
     };
-
-    var DEFAULT_GRAPH_BAR_WIDTH = 32;
+	
+	var GRAPH_ASP_RATIO = 190/505;//Base on 180/500
+	var GRAPH_CANVAS_HEIGHT = 750;//845
+    var GRAPH_CANVAS_WIDTH = GRAPH_CANVAS_HEIGHT * GRAPH_ASP_RATIO;//425
+	var REF_HEIGHT = 505;
+	var REF_WIDTH = REF_HEIGHT * GRAPH_ASP_RATIO;//180
+    var DEFAULT_GRAPH_BAR_WIDTH = 6 * GRAPH_CANVAS_WIDTH / REF_WIDTH;
+	var DEFAULT_GRAPH_BAR_GAP_WIDTH = DEFAULT_GRAPH_BAR_WIDTH * 2;
     var LANE_FONT_SIZE = 12;
-    var TOTAL_COUNT_FONT_SIZE = 32;
-    var TOTAL_COUNTLABEL_FONT_SIZE = 16;
-    var GRAPH_CANVAS_HEIGHT = 845;
-    var GRAPH_CANVAS_WIDTH = 425;
+    var TOTAL_COUNT_FONT_SIZE = 48;
+    var TOTAL_COUNTLABEL_FONT_SIZE = 24;
+    
     var DtxGraphMargins = {
-        "B": 80,
-        "C": 20,
-        "D": 20,
-        "E": 10,
-        "F": 40
+        "B": 86*(GRAPH_CANVAS_HEIGHT / REF_HEIGHT),
+        "C": 12*(GRAPH_CANVAS_HEIGHT / REF_HEIGHT),
+        "D": 3*(GRAPH_CANVAS_HEIGHT / REF_HEIGHT),
+        "E": 16*(GRAPH_CANVAS_HEIGHT / REF_HEIGHT),
+        "F": 40*(GRAPH_CANVAS_HEIGHT / REF_HEIGHT)
     };
     var GRAPH_DIAGRAM_HEIGHT = GRAPH_CANVAS_HEIGHT - DtxGraphMargins.B - DtxGraphMargins.C - DtxGraphMargins.D;
-    var GRAPH_PROPORTION_CAP = 0.25;//
-
+    var GRAPH_PROPORTION_CAP = 0.33;//
+	var GRAPH_PROPORTION_MIN = 150;
+	var GRAPH_PROPORTION_MAX = 250;
 
     var DtxGraphLaneOrderArrays = {
         "full":["LC_Count", "HH_Count", "LP_Count", "LB_Count", "SD_Count", "HT_Count", "BD_Count", "LT_Count", "FT_Count", "RC_Count", "RD_Count"],
@@ -171,19 +179,21 @@ var DtxChart = (function(mod){
      */
     Graph.prototype.drawGraph = function(){
         //Draw a graph where highest count in graph is a fixed proportion of the song note count
-        //var proportionFactorCount = this._metadata["totalNoteCount"] * GRAPH_PROPORTION_CAP;
-        var proportionFactorCount = 0;
+        var proportionFactorCount = this._metadata["totalNoteCount"] * GRAPH_PROPORTION_CAP;
+		proportionFactorCount = Math.max( GRAPH_PROPORTION_MIN, Math.min( GRAPH_PROPORTION_MAX, proportionFactorCount ) );//Cap between min and max number
+		console.log("Proportion Factor count is " + proportionFactorCount);
+	   /*  var proportionFactorCount = 0;
         for(var prop in this._metadata){
             if(this._metadata.hasOwnProperty(prop) && prop !== "totalNoteCount"){
                 if(this._metadata[prop] > proportionFactorCount){
                     proportionFactorCount = this._metadata[prop];
                 }
             }
-        }
+        } */
 
         var option = this._graphOption;
         //Compute Side margin based on selected option
-        var graphDiagramWidth = DtxGraphLaneOrderArrays[option].length * DEFAULT_GRAPH_BAR_WIDTH;
+        var graphDiagramWidth = DtxGraphLaneOrderArrays[option].length * (DEFAULT_GRAPH_BAR_WIDTH + DEFAULT_GRAPH_BAR_GAP_WIDTH) - DEFAULT_GRAPH_BAR_GAP_WIDTH;
         var marginA = (GRAPH_CANVAS_WIDTH - graphDiagramWidth)/2;
         marginA = marginA > 0 ? marginA : 0;
 
@@ -196,17 +206,28 @@ var DtxChart = (function(mod){
             //Calculate the positionSize of current lane
             var index = parseInt(i);
             var currpositionSize = {
-                x: index*DEFAULT_GRAPH_BAR_WIDTH + marginA, 
+                x: index*(DEFAULT_GRAPH_BAR_WIDTH + DEFAULT_GRAPH_BAR_GAP_WIDTH) + marginA, 
+                y: GRAPH_CANVAS_HEIGHT - DtxGraphMargins.B - DtxGraphMargins.C,
+                width: DEFAULT_GRAPH_BAR_WIDTH,
+                height: GRAPH_DIAGRAM_HEIGHT
+            };
+			/* var currpositionSize = {
+                x: index*(DEFAULT_GRAPH_BAR_WIDTH + DEFAULT_GRAPH_BAR_GAP_WIDTH) + marginA, 
                 y: GRAPH_CANVAS_HEIGHT - DtxGraphMargins.B - DtxGraphMargins.C,
                 width: DEFAULT_GRAPH_BAR_WIDTH,
                 height: proportion * GRAPH_DIAGRAM_HEIGHT
-            };
+            }; */
+			
+			//Draw empty graph bar
+			this._drawGraphOfLane(currpositionSize, DTX_EMPTY_LANE);			
+			
             //Draw Graph
+			currpositionSize.height = proportion * GRAPH_DIAGRAM_HEIGHT;
             this._drawGraphOfLane(currpositionSize, lane);
 
             //Draw count
             var textpositionSize = {
-                x: index*DEFAULT_GRAPH_BAR_WIDTH + marginA + DEFAULT_GRAPH_BAR_WIDTH*0.5, 
+                x: index*(DEFAULT_GRAPH_BAR_WIDTH + DEFAULT_GRAPH_BAR_GAP_WIDTH) + marginA + DEFAULT_GRAPH_BAR_WIDTH*0.5, 
                 y: GRAPH_CANVAS_HEIGHT - DtxGraphMargins.B
             };
 
@@ -227,16 +248,27 @@ var DtxChart = (function(mod){
         };
         CanvasEngine.addLine.call(this, linePosSize, drawOption);
 
-        //Draw Label
+        //Draw TOTAL NOTES Label
         var textpositionSize = {
-            x: marginA,
+            x: marginA + 48,
             y: GRAPH_CANVAS_HEIGHT - DtxGraphMargins.E - DtxGraphMargins.F
         };
-        this._drawTotalNoteCountLabelText(textpositionSize, "TOTAL NOTES");
+        this._drawTotalNoteCountLabelText(textpositionSize, "Total Notes");
 
         //Draw Count
+		//HACK for notecount margin since there is no easy way to centralize a text object
+		var notecountmarginX = marginA + 53;
+		if(this._metadata.totalNoteCount < 1000)
+		{
+			notecountmarginX += 15;
+		}
+		if(this._metadata.totalNoteCount < 100)
+		{
+			notecountmarginX += 15;
+		}
+		
         var totalNoteCountTextPosSize = {
-            x: marginA + 15,
+            x: notecountmarginX,
             y: GRAPH_CANVAS_HEIGHT - DtxGraphMargins.E
         };
         this._drawTotalNoteCount(totalNoteCountTextPosSize, "" + this._metadata.totalNoteCount);
@@ -249,9 +281,9 @@ var DtxChart = (function(mod){
     Graph.prototype._drawTotalNoteCountLabelText = function(positionSize, text){
         var textOptions = {
             fill: DtxGraphTextColor.OtherText,
-            fontSize: 16,
+            fontSize: TOTAL_COUNTLABEL_FONT_SIZE,
             fontFamily: "Verdana",
-            fontWeight: "bold",
+            //fontWeight: "bold",
             originY: "bottom"
         };
 
@@ -263,7 +295,7 @@ var DtxChart = (function(mod){
             fill: DtxGraphTextColor.OtherText,
             fontSize: TOTAL_COUNT_FONT_SIZE,
             fontFamily: "Verdana",
-            fontWeight: "bold",
+            //fontWeight: "bold",
             originY: "bottom"
         };
 
