@@ -3,8 +3,20 @@ body {
 	margin-top: 60px;
 }
 
+canvas.invis {
+    display: none;
+}
+
+img.zoomable{
+    cursor: zoom-out;
+}
+
+img.out{
+    cursor: zoom-in;
+}
+
 .top-bar{
-	height:5px;
+	height:2px;
     background:#333333;
     margin-bottom:1px;
 }
@@ -41,6 +53,8 @@ footer{
 }
 
 .tab-content{
+    padding-left: 10px;
+    padding-right: 10px;
     background-color:#333333;
 }
 
@@ -59,6 +73,11 @@ footer{
 
 .canvasSheetContainer > p{
     color: white;
+}
+
+#main_container{
+    padding-left: 0px;
+    padding-right: 0px;
 }
 
 #dtxgraph{

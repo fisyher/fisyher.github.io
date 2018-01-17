@@ -29,7 +29,42 @@ $(document).ready(function(){
 	//
 	function createCanvasSheets(canvasConfigArray, elementSelector){
 		for(var i in canvasConfigArray){
-			$(elementSelector).append('<div class="row"><div class="col-md-12 col-sm-12 col-xs-12 canvasSheetContainer"><canvas id="'+ canvasConfigArray[i].elementId +'"></canvas></div></div>');
+			$(elementSelector).append('<canvas class="invis" id="'+ canvasConfigArray[i].elementId +'"></canvas>');
+		}
+	}
+
+	function createImgElementsFromCanvas(canvasConfigArray, elementSelector){
+		for(var i in canvasConfigArray){
+			var currCanvas = document.getElementById(canvasConfigArray[i].elementId);
+			var dataUrl = currCanvas.toDataURL();
+			var imgElement = $('<img id="img_'+ canvasConfigArray[i].elementId +'">');
+			
+			var zoomFactor = 0.2;
+			imgElement.attr('src', dataUrl);
+			imgElement.addClass('zoomable');
+
+			//Initialize each image as zoomed-out
+			//jquery style does not work
+			imgElement.addClass('out');
+			imgElement[0].onload = function(){
+				console.log(this.width + ", " + this.height);
+				this.height = window.innerHeight - 104;
+			};
+			//End zoomed-out
+
+			imgElement.click(function(){
+				var currImg = $(this);
+				currImg.toggleClass('out');				
+				if(currImg.hasClass('out')){
+					//Zoomed-out
+					currImg.height( window.innerHeight - 104);
+				}
+				else{
+					//Zoomed-in
+					currImg.height( currImg[0].naturalHeight);
+				}
+			});
+			$(elementSelector).append(imgElement);
 		}
 	}
 
@@ -113,6 +148,11 @@ $(document).ready(function(){
 		gfgcharter.drawDTXChart();
 		gfbcharter.setCanvasArray(gfbcanvasConfigArray);
 		gfbcharter.drawDTXChart();
+
+		//
+		createImgElementsFromCanvas(dmcanvasConfigArray, "#drum_chart_container");
+		createImgElementsFromCanvas(gfgcanvasConfigArray, "#guitar_chart_container");
+		createImgElementsFromCanvas(gfbcanvasConfigArray, "#bass_chart_container");
 			
 		//Draw graph last
 		graph = new DtxChart.Graph(dtxdataObject, "dtxgraph");
@@ -250,6 +290,11 @@ $(document).ready(function(){
 					gfbcharter.setCanvasArray(gfbcanvasConfigArray);
 					gfbcharter.drawDTXChart();
 					
+					//
+					createImgElementsFromCanvas(dmcanvasConfigArray, "#drum_chart_container");
+					createImgElementsFromCanvas(gfgcanvasConfigArray, "#guitar_chart_container");
+					createImgElementsFromCanvas(gfbcanvasConfigArray, "#bass_chart_container");
+
 					//Draw graph last
 					graph = new DtxChart.Graph(dtxdataObject, "dtxgraph");
 					graph.drawGraph();
