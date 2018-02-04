@@ -325,7 +325,7 @@ var DtxChart = (function(mod){
         
     };
 
-    //
+    //Sample meta data for drum chart
     var sampleMetadata = {
 		"totalNoteCount": 512,
 		"LC_Count": 19,
@@ -339,7 +339,19 @@ var DtxChart = (function(mod){
 		"FT_Count": 9,
 		"RC_Count": 23,
 		"RD_Count": 0
-	};
+    };
+    
+    //sample meta data for guitar chart
+    var sampleGuitarMetadata = {
+        "totalNoteCount": 0,//Does not equal to total of each individual lane notes!
+        "R_Count": 0,
+        "G_Count": 0,
+        "B_Count": 0,
+        "Y_Count": 0,
+        "M_Count": 0,
+        "O_Count": 0,
+        "Wail_Count": 0
+    };
 
     mod.Graph = Graph;
     return mod;

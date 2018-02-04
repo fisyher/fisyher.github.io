@@ -531,7 +531,8 @@ var DtxChart = (function(mod){
 				"G_Count": 0,
 				"B_Count": 0,
 				"Y_Count": 0,
-				"M_Count": 0,
+                "M_Count": 0,
+                "O_Count": 0,
                 "Wail_Count": 0
             };
         }
@@ -543,7 +544,8 @@ var DtxChart = (function(mod){
 				"G_Count": 0,
 				"B_Count": 0,
 				"Y_Count": 0,
-				"M_Count": 0,
+                "M_Count": 0,
+                "O_Count": 0,
                 "Wail_Count": 0
             };
         }
@@ -571,6 +573,10 @@ var DtxChart = (function(mod){
                 this.metadata[mode].B_Count += count * flagArray[2];
                 this.metadata[mode].Y_Count += count * flagArray[3];
                 this.metadata[mode].M_Count += count * flagArray[4];
+                //For Open Notes
+                if(flagArray.toString() == "0,0,0,0,0"){
+                    this.metadata[mode].O_Count += count;
+                }
             }
         }
         else if(mode === "bass")
@@ -589,6 +595,11 @@ var DtxChart = (function(mod){
                 this.metadata[mode].B_Count += count * flagArray[2];
                 this.metadata[mode].Y_Count += count * flagArray[3];
                 this.metadata[mode].M_Count += count * flagArray[4];
+                //For Open Notes
+                if(flagArray.toString() == "0,0,0,0,0"){
+                    this.metadata[mode].O_Count += count;
+                }
+                
             }
         }        
      };
