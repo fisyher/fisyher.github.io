@@ -21,7 +21,14 @@ var DtxChart = (function(mod){
 		"FT_Count":"#ffa919",
 		"RC_Count":"#00ccff",
 		"RD_Count":"#5eb5ff",
-		"Empty":"#2f2f2f"
+        "Empty":"#2f2f2f",
+        "R_Count": "#ff0000",
+        "G_Count": "#00ff00",
+        "B_Count": "#0000ff",
+        "Y_Count": "#ffff00",
+        "M_Count": "#ff00ff",
+        "O_Count": "#ffffff",
+
     };
 	var DTX_EMPTY_LANE = "Empty";
 
@@ -54,20 +61,44 @@ var DtxChart = (function(mod){
 	var GRAPH_PROPORTION_MIN = 150;
 	var GRAPH_PROPORTION_MAX = 250;
 
-    var DtxGraphLaneOrderArrays = {
+    // var DtxGraphLaneOrderArrays = {
+    //     "full":["LC_Count", "HH_Count", "LP_Count", "LB_Count", "SD_Count", "HT_Count", "BD_Count", "LT_Count", "FT_Count", "RC_Count", "RD_Count"],
+    //     "LP+LB":["LC_Count", "HH_Count", "LP_Count", "SD_Count", "HT_Count", "BD_Count", "LT_Count", "FT_Count", "RC_Count", "RD_Count"],
+    //     "RC+RD":["LC_Count", "HH_Count", "LP_Count", "LB_Count", "SD_Count", "HT_Count", "BD_Count", "LT_Count", "FT_Count", "RC_Count"],
+    //     "Gitadora":["LC_Count", "HH_Count", "LP_Count", "SD_Count", "HT_Count", "BD_Count", "LT_Count", "FT_Count", "RC_Count"]
+    // };
+
+    /*
+    "R_Count": 0,
+        "G_Count": 0,
+        "B_Count": 0,
+        "Y_Count": 0,
+        "M_Count": 0,
+        "O_Count": 0,
+    */ 
+
+    var DtxGraphLaneOrderArrays = { "Drum": {
         "full":["LC_Count", "HH_Count", "LP_Count", "LB_Count", "SD_Count", "HT_Count", "BD_Count", "LT_Count", "FT_Count", "RC_Count", "RD_Count"],
         "LP+LB":["LC_Count", "HH_Count", "LP_Count", "SD_Count", "HT_Count", "BD_Count", "LT_Count", "FT_Count", "RC_Count", "RD_Count"],
         "RC+RD":["LC_Count", "HH_Count", "LP_Count", "LB_Count", "SD_Count", "HT_Count", "BD_Count", "LT_Count", "FT_Count", "RC_Count"],
         "Gitadora":["LC_Count", "HH_Count", "LP_Count", "SD_Count", "HT_Count", "BD_Count", "LT_Count", "FT_Count", "RC_Count"]
+        },
+        "Guitar":{
+            "Gitadora":["R_Count", "G_Count", "B_Count", "Y_Count", "M_Count", "O_Count"]
+        },
+        "Bass":{
+            "Gitadora":["R_Count", "G_Count", "B_Count", "Y_Count", "M_Count", "O_Count"]
+        }
     };
 
     /**
      * Parameters:
      * dtxData - The dtxData object
      * canvasID - The id of the canvas element used to draw the graph. If not provided, defaults to "dtxgraph"
-     * option - Option <string> to choose which type of graph to draw. Valid options are "full", "LP+LB", "RC+RD", "Gitadora", "Vmix". Defaults to "Gitadora" 
+     * option - Option <string> to choose which type of graph to draw. Valid options are "full", "LP+LB", "RC+RD", "Gitadora", "Vmix". Defaults to "Gitadora"
+     * type - Type <string> to choose from "Drum", "Bass", "Guitar"
      */
-    function Graph(dtxData, canvasID, option){
+    function Graph(dtxData, canvasID, option, type){
         
         this._canvasConfig = {
                     "width": GRAPH_CANVAS_WIDTH,
@@ -76,10 +107,10 @@ var DtxChart = (function(mod){
                     "elementId": canvasID ? canvasID : "dtxgraph"
                 };
         this._graphOption = option? option : "Gitadora";//full, LP+LB, RC+RD, Gitadora, Vmix 
-
+        this._graphType = type? type : "Drum";//Drum, Bass, Guitar
         //this._metadata = dtxData.metadata;
 
-        convertMetadata.call(this, dtxData.metadata.drum, this._graphOption);
+        convertMetadata.call(this, dtxData.metadata, this._graphOption, this._graphType);
 
         //this._dtxData = dtxData;
         if(CanvasEngine){
@@ -88,90 +119,88 @@ var DtxChart = (function(mod){
     }
 
     //Another way to express private function?
-    function convertMetadata(metadata, option){
+    function convertMetadata(metadata, option, type){
         
         var l_metadata;
-        if(metadata){
-            l_metadata = metadata;
+        var l_type = type.toLowerCase();
+        l_metadata = metadata[l_type];
+        
+        if(l_type === "drum")
+        {
+            if(option === "full"){
+                this._metadata = {};
+                for(var prop in l_metadata){
+                    if(l_metadata.hasOwnProperty(prop)){
+                        this._metadata[prop] = l_metadata[prop];
+                    }
+                }
+            }
+            else if(option === "LP+LB"){
+                this._metadata = {
+                    "totalNoteCount": l_metadata.totalNoteCount,
+                    "LC_Count": l_metadata.LC_Count,
+                    "HH_Count": l_metadata.HH_Count,
+                    "LP_Count": l_metadata.LP_Count + l_metadata.LB_Count,
+                    "SD_Count": l_metadata.SD_Count,
+                    "HT_Count": l_metadata.HT_Count,
+                    "BD_Count": l_metadata.BD_Count,
+                    "LT_Count": l_metadata.LT_Count,
+                    "FT_Count": l_metadata.FT_Count,
+                    "RC_Count": l_metadata.RC_Count,
+                    "RD_Count": l_metadata.RD_Count
+                };
+            }
+            else if(option === "RC+RD"){
+                this._metadata = {
+                    "totalNoteCount": l_metadata.totalNoteCount,
+                    "LC_Count": l_metadata.LC_Count,
+                    "HH_Count": l_metadata.HH_Count,
+                    "LP_Count": l_metadata.LP_Count,
+                    "LB_Count": l_metadata.LB_Count,
+                    "SD_Count": l_metadata.SD_Count,
+                    "HT_Count": l_metadata.HT_Count,
+                    "BD_Count": l_metadata.BD_Count,
+                    "LT_Count": l_metadata.LT_Count,
+                    "FT_Count": l_metadata.FT_Count,
+                    "RC_Count": l_metadata.RC_Count + l_metadata.RD_Count
+                };
+            }
+            else if(option === "Gitadora"){
+                this._metadata = {
+                    "totalNoteCount": l_metadata.totalNoteCount,
+                    "LC_Count": l_metadata.LC_Count,
+                    "HH_Count": l_metadata.HH_Count,
+                    "LP_Count": l_metadata.LP_Count + l_metadata.LB_Count,
+                    "SD_Count": l_metadata.SD_Count,
+                    "HT_Count": l_metadata.HT_Count,
+                    "BD_Count": l_metadata.BD_Count,
+                    "LT_Count": l_metadata.LT_Count,
+                    "FT_Count": l_metadata.FT_Count,
+                    "RC_Count": l_metadata.RC_Count + l_metadata.RD_Count
+                };
+            }
+            else{//All invalid option will be converted to "full"
+                this._metadata = {};
+                for(var prop in l_metadata){
+                    if(l_metadata.hasOwnProperty(prop)){
+                        this._metadata[prop] = l_metadata[prop];
+                    }
+                }
+                this._graphOption = "full";
+            }
         }
-        else{
-            l_metadata = {
-                "totalNoteCount": 0,
-                "LC_Count": 0,
-                "HH_Count": 0,
-                "LP_Count": 0,
-                "LB_Count": 0,
-                "SD_Count": 0,
-                "HT_Count": 0,
-                "BD_Count": 0,
-                "LT_Count": 0,
-                "FT_Count": 0,
-                "RC_Count": 0,
-                "RD_Count": 0
-            };
+        else
+        {
+            if(option === "Gitadora"){
+                this._metadata = {};
+                for(var prop in l_metadata){
+                    if(l_metadata.hasOwnProperty(prop)){
+                        this._metadata[prop] = l_metadata[prop];
+                    }
+                }
+            }
         }
         
-        if(option === "full"){
-            this._metadata = {};
-            for(var prop in l_metadata){
-                if(l_metadata.hasOwnProperty(prop)){
-                    this._metadata[prop] = l_metadata[prop];
-                }
-            }
-        }
-        else if(option === "LP+LB"){
-            this._metadata = {
-                "totalNoteCount": l_metadata.totalNoteCount,
-                "LC_Count": l_metadata.LC_Count,
-                "HH_Count": l_metadata.HH_Count,
-                "LP_Count": l_metadata.LP_Count + l_metadata.LB_Count,
-                "SD_Count": l_metadata.SD_Count,
-                "HT_Count": l_metadata.HT_Count,
-                "BD_Count": l_metadata.BD_Count,
-                "LT_Count": l_metadata.LT_Count,
-                "FT_Count": l_metadata.FT_Count,
-                "RC_Count": l_metadata.RC_Count,
-                "RD_Count": l_metadata.RD_Count
-            };
-        }
-        else if(option === "RC+RD"){
-            this._metadata = {
-                "totalNoteCount": l_metadata.totalNoteCount,
-                "LC_Count": l_metadata.LC_Count,
-                "HH_Count": l_metadata.HH_Count,
-                "LP_Count": l_metadata.LP_Count,
-                "LB_Count": l_metadata.LB_Count,
-                "SD_Count": l_metadata.SD_Count,
-                "HT_Count": l_metadata.HT_Count,
-                "BD_Count": l_metadata.BD_Count,
-                "LT_Count": l_metadata.LT_Count,
-                "FT_Count": l_metadata.FT_Count,
-                "RC_Count": l_metadata.RC_Count + l_metadata.RD_Count
-            };
-        }
-        else if(option === "Gitadora"){
-            this._metadata = {
-                "totalNoteCount": l_metadata.totalNoteCount,
-                "LC_Count": l_metadata.LC_Count,
-                "HH_Count": l_metadata.HH_Count,
-                "LP_Count": l_metadata.LP_Count + l_metadata.LB_Count,
-                "SD_Count": l_metadata.SD_Count,
-                "HT_Count": l_metadata.HT_Count,
-                "BD_Count": l_metadata.BD_Count,
-                "LT_Count": l_metadata.LT_Count,
-                "FT_Count": l_metadata.FT_Count,
-                "RC_Count": l_metadata.RC_Count + l_metadata.RD_Count
-            };
-        }
-        else{//All invalid option will be converted to "full"
-            this._metadata = {};
-            for(var prop in l_metadata){
-                if(l_metadata.hasOwnProperty(prop)){
-                    this._metadata[prop] = l_metadata[prop];
-                }
-            }
-            this._graphOption = "full";
-        }
     }
 
     /**
@@ -192,14 +221,15 @@ var DtxChart = (function(mod){
         } */
 
         var option = this._graphOption;
+        var type = this._graphType;
         //Compute Side margin based on selected option
-        var graphDiagramWidth = DtxGraphLaneOrderArrays[option].length * (DEFAULT_GRAPH_BAR_WIDTH + DEFAULT_GRAPH_BAR_GAP_WIDTH) - DEFAULT_GRAPH_BAR_GAP_WIDTH;
+        var graphDiagramWidth = DtxGraphLaneOrderArrays[type][option].length * (DEFAULT_GRAPH_BAR_WIDTH + DEFAULT_GRAPH_BAR_GAP_WIDTH) - DEFAULT_GRAPH_BAR_GAP_WIDTH;
         var marginA = (GRAPH_CANVAS_WIDTH - graphDiagramWidth)/2;
         marginA = marginA > 0 ? marginA : 0;
 
-        for(var i in DtxGraphLaneOrderArrays[option]){
+        for(var i in DtxGraphLaneOrderArrays[type][option]){
             //Find the proportion value for current lane
-            var lane = DtxGraphLaneOrderArrays[option][i];
+            var lane = DtxGraphLaneOrderArrays[type][option][i];
             var proportion = this._metadata[ lane ] / proportionFactorCount;
             proportion = proportion > 1.0 ? 1.0 : proportion;//Cap the height to 1.0
 
@@ -250,25 +280,14 @@ var DtxChart = (function(mod){
 
         //Draw TOTAL NOTES Label
         var textpositionSize = {
-            x: marginA + 48,
+            x: GRAPH_CANVAS_WIDTH - marginA,
             y: GRAPH_CANVAS_HEIGHT - DtxGraphMargins.E - DtxGraphMargins.F
         };
         this._drawTotalNoteCountLabelText(textpositionSize, "Total Notes");
 
         //Draw Count
-		//HACK for notecount margin since there is no easy way to centralize a text object
-		var notecountmarginX = marginA + 53;
-		if(this._metadata.totalNoteCount < 1000)
-		{
-			notecountmarginX += 15;
-		}
-		if(this._metadata.totalNoteCount < 100)
-		{
-			notecountmarginX += 15;
-		}
-		
         var totalNoteCountTextPosSize = {
-            x: notecountmarginX,
+            x: GRAPH_CANVAS_WIDTH - marginA,
             y: GRAPH_CANVAS_HEIGHT - DtxGraphMargins.E
         };
         this._drawTotalNoteCount(totalNoteCountTextPosSize, "" + this._metadata.totalNoteCount);
@@ -284,7 +303,8 @@ var DtxChart = (function(mod){
             fontSize: TOTAL_COUNTLABEL_FONT_SIZE,
             fontFamily: "Verdana",
             //fontWeight: "bold",
-            originY: "bottom"
+            originY: "bottom",
+            originX: "right"
         };
 
         CanvasEngine.addText.call(this, positionSize, text, textOptions);
@@ -296,7 +316,8 @@ var DtxChart = (function(mod){
             fontSize: TOTAL_COUNT_FONT_SIZE,
             fontFamily: "Verdana",
             //fontWeight: "bold",
-            originY: "bottom"
+            originY: "bottom",
+            originX: "right"
         };
 
         CanvasEngine.addText.call(this, positionSize, text, textOptions);

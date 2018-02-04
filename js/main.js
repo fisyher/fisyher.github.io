@@ -18,7 +18,9 @@ $(document).ready(function(){
 	var currDtxObject = null;
 	var dtxdataObject = null;
 	var lineMapper = null;
-	var graph = null;
+	var graphDrum = null;
+	var graphGuitar = null;
+	var graphBass = null;
 	var availableCharts = {
             drum: false,
             guitar: false,
@@ -69,7 +71,10 @@ $(document).ready(function(){
 	}
 
 	function createGraphPage(){
-		$("#graph_container").append('<div class="row"><div class="col-md-12 col-sm-12 col-xs-12 canvasSheetContainer"><canvas id="dtxgraph"></canvas></div></div>')
+		$("#graph_container").append('<div class="row"><div class="col-md-2 col-sm-2 col-xs-2 canvasSheetContainer" id="dtxgraphdiv"></div><div class="col-md-2 col-sm-2 col-xs-2 canvasSheetContainer" id="guitargraphdiv"></div><div class="col-md-2 col-sm-2 col-xs-2 canvasSheetContainer" id="bassgraphdiv"></div></div>')
+		$("#dtxgraphdiv").append('<h1>Drums</h1><canvas class="graphs" id="dtxgraph"></canvas>');
+		$("#guitargraphdiv").append('<h1>Guitar</h1><canvas class="graphs" id="guitargraph"></canvas>');
+		$("#bassgraphdiv").append('<h1>Bass</h1><canvas class="graphs" id="bassgraph"></canvas>');
 	}
 
 	// create a wrapper around native canvas element (with id="c1")
@@ -94,8 +99,7 @@ $(document).ready(function(){
 		gfbcharter.clearDTXChart();		
 		$("#drum_chart_container").empty();
 		$("#guitar_chart_container").empty();
-		$("#bass_chart_container").empty();
-		$("#graph_container").empty();
+		$("#bass_chart_container").empty();		
 		//
 		dmcharter.setConfig({
 			scale: parseFloat( $('#SelectScaleFactor').val() ),
@@ -140,7 +144,7 @@ $(document).ready(function(){
 		createCanvasSheets(dmcanvasConfigArray, "#drum_chart_container");
 		createCanvasSheets(gfgcanvasConfigArray, "#guitar_chart_container");
 		createCanvasSheets(gfbcanvasConfigArray, "#bass_chart_container");
-		createGraphPage();
+		//createGraphPage();
 		
 		dmcharter.setCanvasArray(dmcanvasConfigArray);
 		dmcharter.drawDTXChart();
@@ -153,11 +157,7 @@ $(document).ready(function(){
 		createImgElementsFromCanvas(dmcanvasConfigArray, "#drum_chart_container");
 		createImgElementsFromCanvas(gfgcanvasConfigArray, "#guitar_chart_container");
 		createImgElementsFromCanvas(gfbcanvasConfigArray, "#bass_chart_container");
-			
-		//Draw graph last
-		graph = new DtxChart.Graph(dtxdataObject, "dtxgraph");
-		graph.drawGraph();
-
+		
 		//'Click' on first non-home tabs
 		var hLink = "home";
 		if(availableCharts.drum){
@@ -294,27 +294,32 @@ $(document).ready(function(){
 					createImgElementsFromCanvas(dmcanvasConfigArray, "#drum_chart_container");
 					createImgElementsFromCanvas(gfgcanvasConfigArray, "#guitar_chart_container");
 					createImgElementsFromCanvas(gfbcanvasConfigArray, "#bass_chart_container");
-
-					//Draw graph last
-					graph = new DtxChart.Graph(dtxdataObject, "dtxgraph");
-					graph.drawGraph();
-
+					
 					//Hide placeholders of available charts only
 					availableCharts = dtxparserv2.availableCharts();
+					//Drum
 					if(availableCharts.drum){
-						$('#placeholder1').css('display', 'none');					
+						$('#placeholder1').css('display', 'none');
+						graphDrum = new DtxChart.Graph(dtxdataObject, "dtxgraph");
+						graphDrum.drawGraph();					
 					}
 					else{
 						$('#placeholder1').css('display', '');
 					}
+					//Guitar
 					if(availableCharts.guitar){
-						$('#placeholder2').css('display', 'none');					
+						$('#placeholder2').css('display', 'none');
+						graphGuitar = new DtxChart.Graph(dtxdataObject, "guitargraph", null, "Guitar");
+						graphGuitar.drawGraph();					
 					}
 					else{
 						$('#placeholder2').css('display', '');	
 					}
+					//Bass
 					if(availableCharts.bass){
 						$('#placeholder3').css('display', 'none');
+						graphBass = new DtxChart.Graph(dtxdataObject, "bassgraph", null, "Bass");
+						graphBass.drawGraph();
 					}
 					else{
 						$('#placeholder3').css('display', '');

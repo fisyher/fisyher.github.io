@@ -71,8 +71,19 @@ footer{
     color: white;
 }
 
+.canvasSheetContainer > h1{
+    color: white;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
 .canvasSheetContainer > p{
     color: white;
+}
+
+.graphs {
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 #main_container{
