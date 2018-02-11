@@ -584,7 +584,7 @@ var DtxChart = (function(mod){
                                 }, chartInfo.title, {
                                 fill: DtxTextColor.ChartInfo,
                                 fontSize: DtxFontSizes.Title,
-                                fontFamily: "Arial",
+                                fontFamily: "Meiryo UI",
                                 originY: "bottom"
                             });
 
@@ -596,7 +596,7 @@ var DtxChart = (function(mod){
                                 }, chartInfo.artist, {
                                 fill: DtxTextColor.ChartInfo,
                                 fontSize: DtxFontSizes.Artist,
-                                fontFamily: "Arial",
+                                fontFamily: "Meiryo UI",
                                 originY: "bottom"
                             });
             }
