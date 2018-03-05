@@ -251,7 +251,7 @@ var DtxChart = (function(mod){
         var currPage = 0;
         var currAccumulatedHeight = 0;
         var pageHeightLimit = this._pageHeight;
-
+        var maxAccumulatedHeight = 0;
         //First page always starts with bar 0
         pageList.push({
             "startBarIndex" : 0,
@@ -275,6 +275,11 @@ var DtxChart = (function(mod){
                 pageList[pageList.length - 1]["endBarIndex"] = i - 1;
                 pageList[pageList.length - 1]["BAPageHeight"] = currAccumulatedHeight;
 
+                //Find the max height of all pages at the end of this loop
+                if(currAccumulatedHeight >  maxAccumulatedHeight){
+                    maxAccumulatedHeight = currAccumulatedHeight;
+                }
+
                 //This bar will start on next page
                 pageList.push({
                     "startBarIndex" : i
@@ -287,8 +292,8 @@ var DtxChart = (function(mod){
         }
 
         pageList[pageList.length - 1]["endBarIndex"] = barGroups.length - 1;
-        //Last page takes the height of 2nd last page
-        pageList[pageList.length - 1]["BAPageHeight"] = pageList[pageList.length - 2]["BAPageHeight"];//currAccumulatedHeight
+        //Last page takes the largest height value of all previous pages
+        pageList[pageList.length - 1]["BAPageHeight"] = maxAccumulatedHeight;
 
         return pageList;
 
