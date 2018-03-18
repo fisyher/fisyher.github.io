@@ -512,6 +512,7 @@ var DtxChart = (function(mod){
                 "totalNoteCount": 0,
                 "LC_Count": 0,
                 "HH_Count": 0,
+                "HHO_Count": 0,
                 "LP_Count": 0,
                 "LB_Count": 0,
                 "SD_Count": 0,
@@ -711,8 +712,8 @@ var DtxChart = (function(mod){
 		//New DTX Creator uses these codes
         "1A":"LC",
 		"11":"HH",
-		"18":"HH",
-		"1C":"LB",//Should be LB
+		"18":"HHO",
+		"1C":"LB",
 		"1B":"LP",
 		"12":"SD",
 		"14":"HT",
@@ -720,15 +721,7 @@ var DtxChart = (function(mod){
 		"15":"LT",
 		"17":"FT",
 		"16":"RC",
-		"19":"RD",
-		//Old GDA uses the label mostly as is
-		// "SD":"SD",
-		// "BD":"BD",
-		// "CY":"RC",
-		// "HT":"HT",
-		// "LT":"LT",
-		// "FT":"FT",
-		// "HH":"HH"
+		"19":"RD"
 	};
 
     var GDADrumsLaneCodeToLaneLabelMap = {
@@ -864,7 +857,7 @@ var DtxChart = (function(mod){
         //New DTX Creator uses these codes
 		"1A":"LC_Count",
 		"11":"HH_Count",
-		"18":"HH_Count",
+		"18":"HHO_Count",
 		"1C":"LB_Count",//Should be LB
 		"1B":"LP_Count",
 		"12":"SD_Count",

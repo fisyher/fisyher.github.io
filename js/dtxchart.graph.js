@@ -11,7 +11,8 @@ var DtxChart = (function(mod){
 
     var DtxGraphLaneColor = {
         "LC_Count":"#ff1f7b",
-		"HH_Count":"#6ac0ff",
+        "HH_Count":"#6ac0ff",
+        "HHO_Count":"#6ac0ff",
         "LB_Count":"#ff4bed",
 		"LP_Count":"#ff4bed",
 		"SD_Count":"#fcfe16",
@@ -78,7 +79,7 @@ var DtxChart = (function(mod){
     */ 
 
     var DtxGraphLaneOrderArrays = { "Drum": {
-        "full":["LC_Count", "HH_Count", "LP_Count", "LB_Count", "SD_Count", "HT_Count", "BD_Count", "LT_Count", "FT_Count", "RC_Count", "RD_Count"],
+        "full":["LC_Count", "HH_Count", "HHO_Count", "LP_Count", "LB_Count", "SD_Count", "HT_Count", "BD_Count", "LT_Count", "FT_Count", "RC_Count", "RD_Count"],
         "LP+LB":["LC_Count", "HH_Count", "LP_Count", "SD_Count", "HT_Count", "BD_Count", "LT_Count", "FT_Count", "RC_Count", "RD_Count"],
         "RC+RD":["LC_Count", "HH_Count", "LP_Count", "LB_Count", "SD_Count", "HT_Count", "BD_Count", "LT_Count", "FT_Count", "RC_Count"],
         "Gitadora":["LC_Count", "HH_Count", "LP_Count", "SD_Count", "HT_Count", "BD_Count", "LT_Count", "FT_Count", "RC_Count"]
@@ -139,7 +140,7 @@ var DtxChart = (function(mod){
                 this._metadata = {
                     "totalNoteCount": l_metadata.totalNoteCount,
                     "LC_Count": l_metadata.LC_Count,
-                    "HH_Count": l_metadata.HH_Count,
+                    "HH_Count": l_metadata.HH_Count + l_metadata.HHO_Count,
                     "LP_Count": l_metadata.LP_Count + l_metadata.LB_Count,
                     "SD_Count": l_metadata.SD_Count,
                     "HT_Count": l_metadata.HT_Count,
@@ -154,7 +155,7 @@ var DtxChart = (function(mod){
                 this._metadata = {
                     "totalNoteCount": l_metadata.totalNoteCount,
                     "LC_Count": l_metadata.LC_Count,
-                    "HH_Count": l_metadata.HH_Count,
+                    "HH_Count": l_metadata.HH_Count + l_metadata.HHO_Count,
                     "LP_Count": l_metadata.LP_Count,
                     "LB_Count": l_metadata.LB_Count,
                     "SD_Count": l_metadata.SD_Count,
@@ -169,7 +170,7 @@ var DtxChart = (function(mod){
                 this._metadata = {
                     "totalNoteCount": l_metadata.totalNoteCount,
                     "LC_Count": l_metadata.LC_Count,
-                    "HH_Count": l_metadata.HH_Count,
+                    "HH_Count": l_metadata.HH_Count + l_metadata.HHO_Count,
                     "LP_Count": l_metadata.LP_Count + l_metadata.LB_Count,
                     "SD_Count": l_metadata.SD_Count,
                     "HT_Count": l_metadata.HT_Count,
@@ -350,7 +351,8 @@ var DtxChart = (function(mod){
     var sampleMetadata = {
 		"totalNoteCount": 512,
 		"LC_Count": 19,
-		"HH_Count": 138,
+        "HH_Count": 138,
+        "HHO_Count": 12,
 		"LP_Count": 11,//Counted as same lane as LB
 		"LB_Count": 0,
 		"SD_Count": 122,
