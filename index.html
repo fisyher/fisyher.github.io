@@ -29,6 +29,14 @@
                      <input id='openFile' type="file" accept=".dtx, .gda" style="visibility: hidden; display:none;">
                     </form>
                     <span class="navbar-text">&nbsp;</span><button id='Open' class="btn btn-default navbar-btn">Open File...</button>
+                  </li>
+                  <li><span class="navbar-text">&nbsp;Difficulty </span><select id="SelectDifficulty" class="btn btn-primary navbar-btn">
+                        <option value="Basic">Basic</option>
+                        <option value="Advanced">Advanced</option>
+                        <option value="Extreme">Extreme</option>
+                        <option value="Master" selected="selected">Master</option>
+                        <option value="Ultimate">Ultimate</option>
+                      </select>
                   </li>                                      
                   <li><span class="navbar-text">&nbsp;Scale factor </span><select id="SelectScaleFactor" class="btn btn-primary navbar-btn">
                         <option value="0.50">0.50</option>
@@ -48,11 +56,11 @@
                       <option value="1300">1300</option>
                       <option value="1400">1400</option>
                       <option value="1500">1500</option>
-                      <option value="1600" selected="selected">1600</option>
+                      <option value="1600">1600</option>
                       <option value="1700">1700</option>
                       <option value="1800">1800</option>
                       <option value="1900">1900</option>
-                      <option value="2000">2000</option>
+                      <option value="2000" selected="selected">2000</option>
                       <option value="2100">2100</option>
                       <option value="2200">2200</option>
                       <option value="2300">2300</option>
@@ -76,28 +84,7 @@
                     </select>
                   </li>    
                   <li><span class="navbar-text">&nbsp;Page per canvas </span>
-                  <select id="SelectPagePerCanvas" class="btn btn-primary navbar-btn">
-                      <option value="6">6</option>
-                      <option value="7">7</option>
-                      <option value="8">8</option>
-                      <option value="9">9</option>
-                      <option value="10">10</option>
-                      <option value="11">11</option>
-                      <option value="12" selected="selected">12</option>
-                      <option value="13">13</option>
-                      <option value="14">14</option>
-                      <option value="15">15</option>
-                      <option value="16">16</option>
-                      <option value="17">17</option>
-                      <option value="18">18</option>
-                      <option value="19">19</option>
-                      <option value="20">20</option>
-                      <option value="21">21</option>
-                      <option value="22">22</option>
-                      <option value="23">23</option>
-                      <option value="24">24</option>
-                      <option value="25">25</option>                    
-                    </select>
+                  <input id="SelectPagePerCanvas" class="btn btn-primary navbar-btn" type="number" min="5" max="110" value="50" />
                   </li>
                   <li><span class="navbar-text">&nbsp;Mode</span><select id="SelectMode" class="btn btn-primary navbar-btn">
                       <option value="Gitadora" selected="selected">XG/Gitadora</option>

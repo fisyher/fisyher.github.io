@@ -107,6 +107,7 @@ $(document).ready(function(){
 			pagePerCanvas: parseInt( $('#SelectPagePerCanvas').val()),
 			chartType: $('#SelectMode').val(),
 			mode: "drum",
+			difficultyTier: $('#SelectDifficulty').val(),
 			barAligned : true,//Test
 			direction: "up",//up or down
 			drawParameters: DtxChart.DMDrawMethods.createDrawParameters( $('#SelectMode').val() ),
@@ -118,6 +119,7 @@ $(document).ready(function(){
 			pagePerCanvas: parseInt( $('#SelectPagePerCanvas').val()),
 			chartType: $('#SelectMode').val(),
 			mode: "guitar",
+			difficultyTier: $('#SelectDifficulty').val(),
 			barAligned : true,//Test
 			direction: "down",//up or down
 			drawParameters: DtxChart.GFDrawMethods.createDrawParameters( $('#SelectMode').val(), 'G' ),
@@ -129,6 +131,7 @@ $(document).ready(function(){
 			pagePerCanvas: parseInt( $('#SelectPagePerCanvas').val()),
 			chartType: $('#SelectMode').val(),
 			mode: "bass",
+			difficultyTier: $('#SelectDifficulty').val(),
 			barAligned : true,//Test
 			direction: "down",//up or down
 			drawParameters: DtxChart.GFDrawMethods.createDrawParameters( $('#SelectMode').val(), 'B' ),
@@ -227,6 +230,7 @@ $(document).ready(function(){
 						pagePerCanvas: parseInt( $('#SelectPagePerCanvas').val()),
 						chartType: $('#SelectMode').val(),
 						mode: "drum",
+						difficultyTier: $('#SelectDifficulty').val(),
 						barAligned : true,//Test
 						direction: "up",//up or down
 						drawParameters: DtxChart.DMDrawMethods.createDrawParameters( $('#SelectMode').val() ),
@@ -245,6 +249,7 @@ $(document).ready(function(){
 						pagePerCanvas: parseInt( $('#SelectPagePerCanvas').val()),
 						chartType: $('#SelectMode').val(),
 						mode: "guitar",
+						difficultyTier: $('#SelectDifficulty').val(),
 						barAligned : true,//Test
 						direction: "down",//up or down
 						drawParameters: DtxChart.GFDrawMethods.createDrawParameters( $('#SelectMode').val(), "G" ),
@@ -258,6 +263,7 @@ $(document).ready(function(){
 						pagePerCanvas: parseInt( $('#SelectPagePerCanvas').val()),
 						chartType: $('#SelectMode').val(),
 						mode: "bass",
+						difficultyTier: $('#SelectDifficulty').val(),
 						barAligned : true,//Test
 						direction: "down",//up or down
 						drawParameters: DtxChart.GFDrawMethods.createDrawParameters( $('#SelectMode').val(), "B" ),

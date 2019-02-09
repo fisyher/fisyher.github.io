@@ -24,7 +24,7 @@ var DtxChart = (function(mod){
 
     var DEFAULT_PAGEPERCANVAS = 20;
     var MIN_PAGEPERCANVAS = 6;
-    var MAX_PAGEPERCANVAS = 25;
+    var MAX_PAGEPERCANVAS = 110;
 
     var BEAT_LINE_GAP = 48;//192/4
 
