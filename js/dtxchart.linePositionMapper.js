@@ -91,6 +91,42 @@ var DtxChart = (function(mod){
     }
 
     /**
+     * Returns the elapsed time of selected barNumber and LineNumber from beginning Abs Pos 0
+     * in ms
+     * Returns null if input parameters are invalid
+     * 1 Abs Pos is equal to 60/(180*48) seconds
+     */
+    LinePositionMapper.prototype.offsetTime = function(barNumber, lineNumber){
+        var absPos = this.absolutePositionOfLine(barNumber, lineNumber);
+        if(typeof absPos !== "number" || absPos < 0){
+            console.error("absPos is invalid or out of range");
+            return;
+        }
+        return absPos * 1000 * (60/(180*48));
+    }
+
+    /**
+     * Returns total number of bars for loaded dtx
+     */
+    LinePositionMapper.prototype.totalNumberOfBars = function(){
+        return this.barGroups.length;
+    }
+
+    /**
+     * Returns number of lines in specified zero-indexed barNumber
+     */
+    LinePositionMapper.prototype.numberOfLinesInBar = function(barNumber){
+        //check barNumber
+        if(typeof barNumber !== "number" || barNumber < 0 || barNumber >= this.barGroups.length){
+            console.error("barNumber is invalid or out of range");
+            return;
+        }
+
+        return this.barGroups[barNumber]["lines"];
+    }
+
+
+    /**
      * Remarks: This method does not check for correctness of values
      * dtxdata data correctness to be done inside parser instead
      */    
