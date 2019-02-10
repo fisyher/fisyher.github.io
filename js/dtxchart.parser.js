@@ -8,7 +8,8 @@ var DtxChart = (function(mod){
     var SUPPORTED_HEADERS = [
     "; Created by DTXCreator 024",
 	"; Created by DTXCreator 025(verK)",
-	"; Created by DTXCreator 020",
+    "; Created by DTXCreator 020",
+    "; Created by DTXCreatorAL 008",
 	";Created by GDA Creator Professional Ver.0.10",
 	";Created by GDA Creator Professional Ver.0.22"];
     
@@ -32,6 +33,20 @@ var DtxChart = (function(mod){
 		this._rawBarLines = {};
         this._bpmMarkerLabelMap = {};
 
+        //For guitar, bass hold notes. 0: Release 1: Hold
+        //Need to store at this level because Hold notes can across Bars!
+        this._gholdState = 0;
+        this._gHoldNoteInfo = {
+            "startBarPos": {},
+            "endBarPos": {},
+            "buttonType": ""
+        };
+        this._bholdState = 0;
+        this._bHoldNoteInfo = {
+            "startBarPos": {},
+            "endBarPos": {},
+            "buttonType": ""
+        };
 		//
 		this._currBarLength = 1.0;
 		var self = this;
@@ -86,7 +101,7 @@ var DtxChart = (function(mod){
         
         //Further decode rawBarLines
         for (var i = 0; i <= this._largestBarIndex; i++) {
-            var barGroup = this._createBarGroup(this._rawBarLines[i]);
+            var barGroup = this._createBarGroup(this._rawBarLines[i], i);
             this._dtxdata.barGroups.push(barGroup);
         }
         
@@ -110,7 +125,19 @@ var DtxChart = (function(mod){
 		this._rawBarLines = {};
         this._bpmMarkerLabelMap = {};
 		//
-		this._currBarLength = 1.0;
+        this._currBarLength = 1.0;
+        this._gholdState = 0;
+        this._gHoldNoteInfo = {
+            "startBarPos": {},
+            "endBarPos": {},
+            "buttonType": ""
+        };
+        this._bholdState = 0;
+        this._bHoldNoteInfo = {
+            "startBarPos": {},
+            "endBarPos": {},
+            "buttonType": ""
+        };
 	};
 
     /*
@@ -181,7 +208,7 @@ var DtxChart = (function(mod){
     };
     
     //Returns a bar group object
-    Parser.prototype._createBarGroup = function(rawLinesInBar){
+    Parser.prototype._createBarGroup = function(rawLinesInBar, currBarIndex){
         
         //Current Bar is empty
         if(!rawLinesInBar || !rawLinesInBar['Description'] || rawLinesInBar['Description'] !== "dtxBarLine"){
@@ -247,7 +274,7 @@ var DtxChart = (function(mod){
                     "pos":posArray[i]["pos"]
                 });
             }
-        }  
+        }
                 
         for(var prop in rawLinesInBar){
             if(prop === "Description"){
@@ -294,15 +321,24 @@ var DtxChart = (function(mod){
                 if(rawLinesInBar.hasOwnProperty(prop) && GLanesToButtonsMap.hasOwnProperty(prop)){
                     var ButtonCombination = GLanesToButtonsMap[prop];
                     var rawLine = rawLinesInBar[prop];
-                    //
-                    newBarGroup["notes"][ButtonCombination] = rawLine;
-                    //Compute Note count...
-                    var chipCount = countChipBarLine(rawLine, lineCountInCurrentBar);
-                    this._dtxdata.increaseCount("guitar", ButtonCombination, chipCount);
+                    //New: Handle Guitar and Bass Hold Notes
+                    if(ButtonCombination === "GHold"){
+                        //var initialGHoldState = this._gholdState;
+                        //Need to verify Hold State validity with actual notes to hold
+                        this._processHoldNotes(rawLine, rawLinesInBar, "G", lineCountInCurrentBar, currBarIndex);                        
+
+                    }
+                    else{
+                        newBarGroup["notes"][ButtonCombination] = rawLine;
+                        //Compute Note count...
+                        var chipCount = countChipBarLine(rawLine, lineCountInCurrentBar);
+                        this._dtxdata.increaseCount("guitar", ButtonCombination, chipCount);
+                    }
+                    
                 }
             }
 
-            //Handle the actual guitar chips only if GLevel is available
+            //Handle the actual bass chips only if BLevel is available
             if(this._dtxdata.chartInfo.basslevel > 0.00){
                 var BLanesToButtonsMap = DtxBassLanesCodeToButtonsMap;
                 if(this._config.mode === "dtx"){
@@ -316,24 +352,142 @@ var DtxChart = (function(mod){
                 if(rawLinesInBar.hasOwnProperty(prop) && BLanesToButtonsMap.hasOwnProperty(prop)){
                     var ButtonCombination = BLanesToButtonsMap[prop];
                     var rawLine = rawLinesInBar[prop];
-                    //
-                    newBarGroup["notes"][ButtonCombination] = rawLine;
-                    //Compute Note count...
-                    var chipCount = countChipBarLine(rawLine, lineCountInCurrentBar);
-                    this._dtxdata.increaseCount("bass", ButtonCombination, chipCount);
+                    //New: Handle Guitar and Bass Hold Notes
+                    if(ButtonCombination === "BHold"){
+                        this._processHoldNotes(rawLine, rawLinesInBar, "B", lineCountInCurrentBar, currBarIndex);                        
+                    }
+                    else{
+                        newBarGroup["notes"][ButtonCombination] = rawLine;
+                        //Compute Note count...
+                        var chipCount = countChipBarLine(rawLine, lineCountInCurrentBar);
+                        this._dtxdata.increaseCount("bass", ButtonCombination, chipCount);
+                    }
+                    
                 }
             }   
             
         } 
-        
-
-            
-        
         //TODO: Finish _createBarGroup
         return newBarGroup;
         
     };
     
+    /**
+     * Method: DtxChart.Parser._processHoldNotes
+     * Parameters:
+     * inputLine - A single text line
+     * rawLinesInBar - Other lines within this bar
+     * GorB - Guitar ("G") or Bass ("B")
+     * totalLineCount - LineCount for this bar
+     * currBarIndex - bar index
+     * Description:
+     * Parse Hold Notes lines in DTX, checks for its validity and convert it to a more suitable data structure format for rendering purposes
+     * Returns: None
+     */
+    Parser.prototype._processHoldNotes = function(inputLine, rawLinesInBar, GorB, totalLineCount, currBarIndex){
+        //Ensure a Hold note matches with a proper key press combi
+        //and Update the value to hold the button combi code
+        if(GorB === "G"){
+            var currHoldState = this._gholdState; //Hold state has to persist in higher order as Hold notes can cross Bars!
+            var currHoldNoteInfo = this._gHoldNoteInfo;
+            var lanesToButtonsMap = DtxGuitarLanesCodeToButtonsMap;//GDA hold note not support so ignore
+            var currDtxDataHoldNotesInfoArray = this._dtxdata.gHoldNotes;
+        }
+        else{
+            var currHoldState = this._bholdState;
+            var currHoldNoteInfo = this._bHoldNoteInfo;
+            var lanesToButtonsMap = DtxBassLanesCodeToButtonsMap;
+            var currDtxDataHoldNotesInfoArray = this._dtxdata.bHoldNotes;
+        }
+
+        //Store hold notes for this bar in a chipPosArray
+        var holdNotesPosArray = decodeBarLine(inputLine, totalLineCount);
+        var buttonNotesPosMapArray = {};
+        
+        //Read Pos array for all types of available notes in Bar
+        for(var prop in rawLinesInBar){
+            //Ignore Wails, Hold and Open notes, we only interested in Guitar / Bass Button combos
+            if(prop === "Description" || prop === "28" || prop === "A8" || prop === "2C" || prop === "2D" || prop === "20" || prop === "A0"){
+                continue;
+            }
+
+            //
+            if(rawLinesInBar.hasOwnProperty(prop) && lanesToButtonsMap.hasOwnProperty(prop)){
+                var currButtonNotesPosArray = decodeBarLine( rawLinesInBar[prop], totalLineCount );
+                buttonNotesPosMapArray[prop] = currButtonNotesPosArray;
+            }
+        }
+
+        /**
+         * Checking Conditions:
+         * 1. If current hold state is Release and a note that coincide with Hold Note, set startBarPos in currHoldNoteInfo
+         * 2. If current hold state is Release and no notes coincide with it, do nothing
+         * 3. If current hold state is Hold and at least one note coincide or came before it, reset currHoldNoteInfo and set hold state to Release (Invalidate this Hold Note)
+         * 4. If current hold state is Hold and no notes coincide or came before it, set endBarPos in currHoldNoteInfo, add to current DtxObject, reset all Hold Notes state  
+         * */ 
+        //Iterate for all holdNotesPos (Usually only 1 in a Bar, maybe 2 or 3)
+        var lowerBoundPos = -1;//
+        for (var i = 0; i < holdNotesPosArray.length; i++) {
+            
+            var toSkipValidConditionCheck = false;            
+            for(var prop in buttonNotesPosMapArray){
+                if(buttonNotesPosMapArray.hasOwnProperty(prop)) {
+                    for (var j = 0; j < buttonNotesPosMapArray[prop].length; j++) {
+                
+                        //Release
+                        if(currHoldState === 0){
+                            if(holdNotesPosArray[i]["pos"] === buttonNotesPosMapArray[prop][j]["pos"]){
+                                currHoldState = 1;
+                                currHoldNoteInfo["startBarPos"]["barIndex"] = currBarIndex;
+                                currHoldNoteInfo["startBarPos"]["pos"] = buttonNotesPosMapArray[prop][j]["pos"];
+                                currHoldNoteInfo["buttonType"] = lanesToButtonsMap[prop];
+                                toSkipValidConditionCheck = true;//Current Hold Note is a start hold so skip the check later
+                                lowerBoundPos = holdNotesPosArray[i]["pos"];                                
+                            }
+                        }
+                        //Hold
+                        else{
+                            //Check for invalid conditions only
+                            if(holdNotesPosArray[i]["pos"] >= buttonNotesPosMapArray[prop][j]["pos"] &&
+                               lowerBoundPos < buttonNotesPosMapArray[prop][j]["pos"]){
+                                currHoldNoteInfo["startBarPos"] = {};
+                                currHoldNoteInfo["endBarPos"] = {};
+                                currHoldNoteInfo["buttonType"] = "";
+                                currHoldState = 0;
+                                lowerBoundPos = -1;
+                            }
+                        }
+                        
+                    }
+                }
+            }
+            
+            //Check for valid conditions AFTER checking through all of buttonNotesPosMapArray
+            if(toSkipValidConditionCheck === false && currHoldState === 1){
+                //Should be valid Hold note end pos. Need to test
+                currHoldNoteInfo["endBarPos"]["barIndex"] = currBarIndex;
+                currHoldNoteInfo["endBarPos"]["pos"] = holdNotesPosArray[i]["pos"];
+                //Add deep copy of currHoldNoteInfo to dtxObject
+                var newHoldNoteInfo = JSON.parse(JSON.stringify(currHoldNoteInfo));//Deep copy of currHoldNoteInfo
+                currDtxDataHoldNotesInfoArray.push(newHoldNoteInfo); 
+                //Reset currHoldNoteInfo and currHoldState
+                currHoldNoteInfo["startBarPos"] = {};
+                currHoldNoteInfo["endBarPos"] = {};
+                currHoldNoteInfo["buttonType"] = "";
+                currHoldState = 0;
+                lowerBoundPos = -1;
+            }
+
+        }
+
+        //Copy value back to this
+        if(GorB === "G"){
+            this._gholdState = currHoldState;
+        }
+        else{
+            this._bholdState = currHoldState;
+        }
+    }
     
     //List all possible types of keys
     var decodeFunctionMap = {
@@ -496,6 +650,8 @@ var DtxChart = (function(mod){
             };
         this.metadata = {};
         this.barGroups = [];
+        this.gHoldNotes = [];
+        this.bHoldNotes = [];
     }
 
     /**
@@ -768,7 +924,8 @@ var DtxChart = (function(mod){
         "D1": "G10111",
         "D2": "G11011",
         "D3": "G11111",
-        "28": "GWail"
+        "28": "GWail",
+        "2C": "GHold"
         //GDA style (May clashes with unknown dtx lane codes!)
         // "G0": "G000",
         // "G1": "G001",
@@ -827,7 +984,8 @@ var DtxChart = (function(mod){
         "E6": "B10111",
         "E7": "B11011",
         "E8": "B11111",
-        "A8": "BWail"
+        "A8": "BWail",
+        "2D": "BHold"
         //GDA style (Clashes with unknown dtx lane codes!)
         // "B0": "B000",
         // "B1": "B001",

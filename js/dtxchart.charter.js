@@ -364,6 +364,14 @@ var DtxChart = (function(mod){
                 }
             }
 
+        }        
+
+        //Draw Hold Notes (Guitar and Bass only)
+        if(this._mode === "guitar"){
+            this.drawHoldNotes(this._dtxdata.gHoldNotes);
+        }
+        else if(this._mode === "bass"){
+            this.drawHoldNotes(this._dtxdata.bHoldNotes);
         }
 
         //Draw the start and end line
@@ -809,6 +817,181 @@ var DtxChart = (function(mod){
     };
 
     /**
+     * Method: drawHoldNotes
+     * Parameters:
+     * holdNotesInfoArray - An array of HoldNotesInfo {"startBarPos": {barIndex: <int>, pos: <int>}, "endBarPos": {barIndex: <int>, pos: <int>}, "buttonType": ""}
+     *  
+     */
+    Charter.prototype.drawHoldNotes = function(holdNotesInfoArray){
+
+        for (let index = 0; index < holdNotesInfoArray.length; index++) {
+            const holdNotesInfo = holdNotesInfoArray[index];
+            
+            //Get absolute pos for start and end position of Hold Note
+            var startAbsPos = this._positionMapper.absolutePositionOfLine(holdNotesInfo["startBarPos"]["barIndex"], holdNotesInfo["startBarPos"]["pos"]);
+            var endAbsPos = this._positionMapper.absolutePositionOfLine(holdNotesInfo["endBarPos"]["barIndex"], holdNotesInfo["endBarPos"]["pos"]);
+
+            //Get pixelSheetPos for each of start and end for current canvas setting
+            var startPixSheetPos = this.getPixelPositionOfLine(startAbsPos);
+            var endPixSheetPos = this.getPixelPositionOfLine(endAbsPos);
+
+            //Draw from start pos to end pos
+            //VIOLA
+            //NO. Not that simple. Hold Notes move across time, which is draw out vertically on canvas, thus it is possible to cross multiple columns and even canvas sheet!
+
+            //Base on start and end PixSheetPos, calculate how many vertical segments to be drawn
+            var currHoldNoteVerticalSegments = this._computeVerticalSegmentsForHoldNote(startPixSheetPos, endPixSheetPos);
+
+            //To do the actual drawing given the verticalsegments info and buttonType
+            //console.log("Hold note compute done");
+            this._drawHoldNoteVerticalSegments(currHoldNoteVerticalSegments, holdNotesInfo["buttonType"]);
+        }
+    }
+
+    Charter.prototype._drawHoldNoteVerticalSegments = function(currHoldNoteVerticalSegments, buttonType){
+        
+        //Get rectangle infos based on buttonType
+        let isOpen = true;
+        let currNoteFlagArray = [];
+        for (let i = 0; i < this._DTXDrawParameters.flagArray.length; i++) {
+            let flag = buttonType.charAt(i+1) === "1" ? 1 : 0;
+            if(flag === 1){
+                isOpen = false;
+            }
+            currNoteFlagArray.push(flag);                
+        }
+        
+        if(isOpen){
+            console.warn("Open should not have Hold notes!");
+        }
+        else{
+            //Iterate for all vertical segments
+            for (let index = 0; index < currHoldNoteVerticalSegments.length; index++) {
+                const currVertSegment = currHoldNoteVerticalSegments[index];
+                
+                let currSheetIndex = currVertSegment.startPixSheetPos.sheetIndex;          
+                if(this._direction === "up"){                
+                    var originYRect = "bottom";
+                } else if(this._direction === "down"){                
+                    var originYRect = "top";
+                }
+                
+                //Draw Rectangle only if button is pressed
+                for (let j = 0; j < currNoteFlagArray.length; j++) {
+                    const flag = currNoteFlagArray[j];
+                    const flagLabel = this._DTXDrawParameters.flagArray[j]; 
+                    if(flag === 1){
+                        //Draw the required rectangles
+                        let segPixPosX =  currVertSegment.startPixSheetPos.posX + this._DTXDrawParameters.ChipHorizontalPositions[flagLabel];
+                        let segWidth = this._DTXDrawParameters.chipWidthHeight[flagLabel].width;
+                        this._chartSheets[currSheetIndex].addRectangle({x: segPixPosX,
+                            y: currVertSegment.startPixSheetPos.posY,
+                            width: segWidth,//
+                            height: Math.abs( currVertSegment.endPixSheetPos.posY - currVertSegment.startPixSheetPos.posY )
+                            }, {
+                                fill: this._DTXDrawParameters.chipColors[flagLabel],
+                                originY: originYRect,
+                                opacity: 0.5
+                            });
+                    }
+                }    
+            }
+        }
+    }
+
+    /**
+     * Method: _computeVerticalSegmentsForHoldNote (internal method)
+     * Parameters:
+     * startPixSheetPosition - The start position of hold note
+     * endPixSheetPosition -  The end position of hold note
+     * Returns: An array of start and end pixsheet positions for vertical segments
+     */
+    Charter.prototype._computeVerticalSegmentsForHoldNote = function(startPixSheetPosition, endPixSheetPosition){
+
+        //Get absolute PageIndex for both start and end positions
+        var startPageAbsIndex = startPixSheetPosition.sheetIndex * this._pagePerCanvas + startPixSheetPosition.sheetPageIndex;
+        var endPageAbsIndex = endPixSheetPosition.sheetIndex * this._pagePerCanvas + endPixSheetPosition.sheetPageIndex;
+
+        var numVerticalSegments = endPageAbsIndex - startPageAbsIndex + 1;
+        var retArray = [];
+        if(numVerticalSegments === 1){
+            //Easy, just return the array as it is                
+            retArray.push({
+                startPixSheetPos : JSON.parse( JSON.stringify(startPixSheetPosition) ),//Deep copy?
+                endPixSheetPos : JSON.parse( JSON.stringify(endPixSheetPosition) )
+            });            
+        }
+        else{
+
+            /**
+                 * Some Number patterns to consider: numVerticalSegments - 1 = pairs of intermediate positions
+                 * Thus, we can iterate by number of pairs of intermediate positions
+                 */
+            var currStartPixSheetPosition = JSON.parse( JSON.stringify(startPixSheetPosition) );
+            
+            for (let index = 0; index < numVerticalSegments - 1; index++) {
+                let currPageAbsIndex = startPageAbsIndex + index;
+                let currSheetIndex = Math.floor( currPageAbsIndex / this._pagePerCanvas );
+                let currSheetPageIndex = currPageAbsIndex % this._pagePerCanvas;
+                
+                if(this._direction === "up"){
+                    var startPoint = this._chartSheets[currSheetIndex].canvasWidthHeightPages().height;
+                    var edgeOffset = DtxChartCanvasMargins.E;
+                    var directionMultiplier = -1.0;                
+                } else if(this._direction === "down"){
+                    var startPoint = 0;
+                    var edgeOffset = DtxChartCanvasMargins.A + DtxChartCanvasMargins.B;
+                    var directionMultiplier = 1.0;
+                }
+
+                //Get end pos of current vertical segment
+                if(this._barAligned){
+                    var currPageHeight = this._pageList[currPageAbsIndex].BAPageHeight;
+                }
+                else{
+                    var currPageHeight = this._pageHeight;
+                }                    
+                let currVerticalEndPosY = startPoint + directionMultiplier * (edgeOffset + currPageHeight + DtxChartCanvasMargins.G);
+                let currVerticalEndPosX = currStartPixSheetPosition["posX"];
+
+                //Push into array
+                retArray.push({
+                    startPixSheetPos : currStartPixSheetPosition,
+                    endPixSheetPos : {
+                        sheetIndex: currSheetIndex,
+                        sheetPageIndex: currSheetPageIndex,
+                        posX: currVerticalEndPosX,
+                        posY: currVerticalEndPosY
+                    }
+                });
+
+                //Get start pos for NEXT vertical segment
+                let nextVerticalStartPosY = startPoint + directionMultiplier * (edgeOffset + DtxChartCanvasMargins.G);
+                let nextSheetIndex = Math.floor( (currPageAbsIndex + 1) / this._pagePerCanvas );
+                let nextSheetPageIndex = (currPageAbsIndex + 1) % this._pagePerCanvas; 
+                let nextVerticalStartPosX = DtxChartCanvasMargins.C + 
+                ( this._DTXDrawParameters.ChipHorizontalPositions.width + DtxChartCanvasMargins.F ) * nextSheetPageIndex;
+
+                currStartPixSheetPosition = {
+                    sheetIndex: nextSheetIndex,
+                    sheetPageIndex: nextSheetPageIndex,
+                    posX: nextVerticalStartPosX,
+                    posY: nextVerticalStartPosY
+                };
+                
+            }    
+            
+            //Wrap up the last segment with the final pix position
+            retArray.push({
+                startPixSheetPos : currStartPixSheetPosition,
+                endPixSheetPos : JSON.parse( JSON.stringify(endPixSheetPosition) )
+            });
+        }   
+        
+        return retArray;
+    }
+
+    /**
      * Method: getPixelPositionOfLine
      * Parameter:
      * absolutePositon - The absolute position of the a line
@@ -858,6 +1041,7 @@ var DtxChart = (function(mod){
 
             return {
                 sheetIndex: sheetIndex,
+                sheetPageIndex: sheetPageIndex,
                 posX: actualPixWidthPosofLine,
                 posY: actualPixHeightPosofLine
             };
@@ -891,6 +1075,7 @@ var DtxChart = (function(mod){
 
             return {
                 sheetIndex: sheetIndex,
+                sheetPageIndex: sheetPageIndex,
                 posX: actualPixWidthPosofLine,
                 posY: actualPixHeightPosofLine
             };
