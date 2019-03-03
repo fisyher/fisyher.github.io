@@ -23,6 +23,12 @@ var DtxChart = (function(mod){
     CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/rightcymbal_chip.png", "RC");
     CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/ridecymbal_chip.png", "RD");
 
+    //Load Difficulty Word Art
+    CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/DrumBasicBannerSmall.png", "drumBasic");
+    CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/DrumAdvancedBannerSmall.png", "drumAdvanced");
+    CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/DrumExtremeBannerSmall.png", "drumExtreme");
+    CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/DrumMasterBannerSmall.png", "drumMaster");
+
     //Width and Height of chips are standard
     var DEFAULT_CHIP_HEIGHT = 5;
 	var DEFAULT_CHIP_WIDTH = 18;

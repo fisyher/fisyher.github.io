@@ -20,6 +20,16 @@ var DtxChart = (function(mod){
     CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/open_gfvchip.png", "GFOV");
     CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/wail_gfchip.png", "GFW");
 
+    //Load Difficulty Word Art
+    CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/BassBasicBannerSmall.png", "bassBasic");
+    CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/BassAdvancedBannerSmall.png", "bassAdvanced");
+    CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/BassExtremeBannerSmall.png", "bassExtreme");
+    CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/BassMasterBannerSmall.png", "bassMaster");
+    CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/GuitarBasicBannerSmall.png", "guitarBasic");
+    CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/GuitarAdvancedBannerSmall.png", "guitarAdvanced");
+    CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/GuitarExtremeBannerSmall.png", "guitarExtreme");
+    CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/GuitarMasterBannerSmall.png", "guitarMaster");
+
     //Width and Height of chips are standard
     var DEFAULT_CHIP_HEIGHT = 5;
 	var DEFAULT_CHIP_WIDTH = 19;

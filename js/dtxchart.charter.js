@@ -32,12 +32,13 @@ var DtxChart = (function(mod){
     var DtxChartCanvasMargins = {
         "A": 58,//Info section height
         "B": 2,//Top margin of page//31
-        "C": 3,//Left margin of chart
-        "D": 3,//Right margin of chart
-        "E": 30,//Bottom margin of page
+        "C": 3,//Left margin of each canvas
+        "D": 3,//Right margin of each canvas
+        "E": 40,//Bottom margin of page
         "F": 0,//Right margin of each page (Except the last page for each canvas)
         "G": 12,//Top/Bottom margin of Last/First line from the top/bottom border of each page
         "H": 2, //Bottom Margin height of Sheet Number text from the bottom edge of canvas
+        "I": 150, //Title and Artist X-offset from left
     };    
 
     var DtxFillColor = {
@@ -45,6 +46,8 @@ var DtxChart = (function(mod){
         "ChartInfo":"#221e1a",
         "PageFill": "#221e1a"
     };
+
+    //Difficulty Mode Color: "#a900ff" "#ed1c24" "#beaf02" "#5297ff"
 
     var DtxBarLineColor = {
         "BarLine": "#707070",
@@ -91,6 +94,7 @@ var DtxChart = (function(mod){
         this._barAligned = false;
         this._chartType = "full";
         this._mode = null;
+        this._difficultyTier = null;
         this._DTXDrawParameters = {};
         this._direction = "up";
     }
@@ -135,6 +139,7 @@ var DtxChart = (function(mod){
 
         this._chartType = config.chartType? config.chartType : "full";//full, Gitadora, Vmix
         this._mode = config.mode;//
+        this._difficultyTier = config.difficultyTier;
         this._DTXDrawParameters = config.drawParameters;//config.createDrawParameters(this._chartType);
         this._drawNoteFunction = config.drawNoteFunction;
     }
@@ -151,6 +156,7 @@ var DtxChart = (function(mod){
         this._barAligned = false;
         this._chartType = "full";
         this._mode = null;
+        this._difficultyTier = null;
         this._DTXDrawParameters = {};
 
         this._pageList = null;
@@ -561,8 +567,7 @@ var DtxChart = (function(mod){
 
         var diffLevel = this._chartType === "Vmix" ? Math.floor(chartInfo[this._mode + "level"]*10).toFixed(0) : chartInfo[this._mode + "level"] + "";
         
-        var modeInfo = this._mode.toUpperCase();
-        var otherInfoUpperLine = modeInfo + " Level: " + diffLevel + "  BPM: " + chartInfo.bpm;
+        var otherInfoUpperLine = " Level: " + diffLevel + "  BPM: " + chartInfo.bpm;
         var otherInfoLowerLine = "Length: " + songMinutes + ":" + songSeconds +"  Total Notes: " + totalNoteCount;
         //var otherInfo = modeInfo + " Level:" + diffLevel + "  BPM:" + chartInfo.bpm + "  Length:" + songMinutes + ":" + songSeconds +"  Total Notes:" + totalNoteCount;
 
@@ -572,6 +577,9 @@ var DtxChart = (function(mod){
         var DtxMaxTitleWidth = (this._DTXDrawParameters.ChipHorizontalPositions.width + DtxChartCanvasMargins.F)*3.8 + DtxChartCanvasMargins.C;//Max span 4 pages long
         var DtxMaxArtistWidth = DtxMaxTitleWidth;
         var DtxMaxOtherInfoWidth = (this._DTXDrawParameters.ChipHorizontalPositions.width + DtxChartCanvasMargins.F)*2 + DtxChartCanvasMargins.D;
+
+        /**ChartType and Difficulty Tier Decal */
+        var decalName = this._mode + this._difficultyTier;
 
         //Repeat for every sheet available
         for(var i in this._chartSheets){
@@ -591,7 +599,7 @@ var DtxChart = (function(mod){
                                     });
 
             this._chartSheets[i].addText({
-                                x: DtxChartCanvasMargins.C + 2,
+                                x: DtxChartCanvasMargins.C + DtxChartCanvasMargins.I,
                                 y: DtxChartCanvasMargins.A - 19, //A is the Line divider, The Title text will be above the Artist text
                                 width: DtxMaxTitleWidth
                                 }, chartInfo.title, {
@@ -603,7 +611,7 @@ var DtxChart = (function(mod){
 
             if(chartInfo.artist && chartInfo.artist !== ""){
                 this._chartSheets[i].addText({
-                                x: DtxChartCanvasMargins.C + 2,
+                                x: DtxChartCanvasMargins.C + DtxChartCanvasMargins.I,
                                 y: DtxChartCanvasMargins.A, //A is the Line divider, The Artist text will be slightly below it
                                 width: DtxMaxArtistWidth
                                 }, chartInfo.artist, {
@@ -648,6 +656,15 @@ var DtxChart = (function(mod){
                                     stroke: DtxBarLineColor.TitleLine,
 		                            strokeWidth: 2,
                                 });
+
+            //Draw Decal at top left corner                    
+            this._chartSheets[i].addChip({x: DtxChartCanvasMargins.C, 
+                                y: DtxChartCanvasMargins.A / 2.0, //Add Chip has OriginY at Center so have to set in center of Info Section
+                                width: 140, //Set to Actual image width
+                                height: 50  //Set to actual image height
+                            }, {
+                                fill: null
+                            }, this._DTXDrawParameters.imageSet[decalName]);                    
         }
     };
 
