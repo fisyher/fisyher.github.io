@@ -78,7 +78,7 @@ var DtxChart = (function(mod){
         }
         
         //Start processing all valid lines
-		for (var i = 1; i < lines.length; i++) {
+		for (var i = 0; i < lines.length; i++) {
 			if(lines[i].length > 0 && lines[i][0]==='#')
 			{
 				this._parseTextLine(lines[i]);
