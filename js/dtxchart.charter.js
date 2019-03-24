@@ -42,7 +42,7 @@ var DtxChart = (function(mod){
     };    
 
     var DtxFillColor = {
-        "Background": "#ffffff",
+        "Background": "#000000",
         "ChartInfo":"#221e1a",
         "PageFill": "#221e1a"
     };
@@ -60,10 +60,10 @@ var DtxChart = (function(mod){
     };
 
     var DtxTextColor = {
-        "BarNumber": "#000000",
+        "BarNumber": "#ffffff",
         "BpmMarker": "#ffffff",
         "ChartInfo": "#ffffff",
-        "PageNumber": "#000000"
+        "PageNumber": "#ffffff"
     };   
 
     var DtxFontSizes = {
@@ -303,6 +303,15 @@ var DtxChart = (function(mod){
 
         return pageList;
 
+    };
+
+    Charter.prototype.imageSetReadyPromise = function(){
+        if(this._DTXDrawParameters.imageSet_promises){
+            return Promise.all(this._DTXDrawParameters.imageSet_promises);
+        }
+        else{
+            return Promise.resolve(false);
+        }
     };
 
     /**

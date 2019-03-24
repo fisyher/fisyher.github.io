@@ -145,9 +145,14 @@ var DtxChart = (function(mod){
 
     function loadChipImageAssets(url, laneLabel){
         var self = this;
-        fabric.util.loadImage(url, function (img) {            
-            self[laneLabel] = img;           
+        var promise = new Promise(function(resolve, reject){
+            fabric.util.loadImage(url, function (img) {            
+                self[laneLabel] = img;
+                console.log(img);
+                resolve(true);           
+            });
         });
+        return promise;
     }
    //
     mod.CanvasEngine = {

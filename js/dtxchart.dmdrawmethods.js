@@ -9,25 +9,26 @@ var DtxChart = (function(mod){
         console.error("CanvasEngine not loaded into DtxChart module! DtxChart.Charter will not render without a Canvas engine");
     }
     //Preload drum chips image assets
+    var drumsChipImageSet_ArrayPromises = [];
     var drumsChipImageSet = {};
-    CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/leftcymbal_chip.png", "LC");
-    CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/hihat_chip.png", "HH");
-    CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/hihat_chip.png", "HHO");
-    CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/snare_chip.png", "SD");
-    CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/leftbass_chip.png", "LB");
-    CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/lefthihatpedal_chip.png", "LP");
-    CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/hitom_chip.png", "HT");
-    CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/rightbass_chip.png", "BD");
-    CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/lowtom_chip.png", "LT");
-    CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/floortom_chip.png", "FT");
-    CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/rightcymbal_chip.png", "RC");
-    CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/ridecymbal_chip.png", "RD");
+    drumsChipImageSet_ArrayPromises.push(CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/leftcymbal_chip.png", "LC"));
+    drumsChipImageSet_ArrayPromises.push(CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/hihat_chip.png", "HH"));
+    drumsChipImageSet_ArrayPromises.push(CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/hihat_chip.png", "HHO"));
+    drumsChipImageSet_ArrayPromises.push(CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/snare_chip.png", "SD"));
+    drumsChipImageSet_ArrayPromises.push(CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/leftbass_chip.png", "LB"));
+    drumsChipImageSet_ArrayPromises.push(CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/lefthihatpedal_chip.png", "LP"));
+    drumsChipImageSet_ArrayPromises.push(CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/hitom_chip.png", "HT"));
+    drumsChipImageSet_ArrayPromises.push(CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/rightbass_chip.png", "BD"));
+    drumsChipImageSet_ArrayPromises.push(CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/lowtom_chip.png", "LT"));
+    drumsChipImageSet_ArrayPromises.push(CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/floortom_chip.png", "FT"));
+    drumsChipImageSet_ArrayPromises.push(CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/rightcymbal_chip.png", "RC"));
+    drumsChipImageSet_ArrayPromises.push(CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/ridecymbal_chip.png", "RD"));
 
     //Load Difficulty Word Art
-    CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/DrumBasicBannerSmall.png", "drumBasic");
-    CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/DrumAdvancedBannerSmall.png", "drumAdvanced");
-    CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/DrumExtremeBannerSmall.png", "drumExtreme");
-    CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/DrumMasterBannerSmall.png", "drumMaster");
+    drumsChipImageSet_ArrayPromises.push(CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/DrumBasicBannerSmall.png", "drumBasic"));
+    drumsChipImageSet_ArrayPromises.push(CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/DrumAdvancedBannerSmall.png", "drumAdvanced"));
+    drumsChipImageSet_ArrayPromises.push(CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/DrumExtremeBannerSmall.png", "drumExtreme"));
+    drumsChipImageSet_ArrayPromises.push(CanvasEngine.loadChipImageAssets.call(drumsChipImageSet, "assets/images/DrumMasterBannerSmall.png", "drumMaster"));
 
     //Width and Height of chips are standard
     var DEFAULT_CHIP_HEIGHT = 5;
@@ -86,6 +87,7 @@ var DtxChart = (function(mod){
             }
         }
         //Image if available
+        drawParameters.imageSet_promises = drumsChipImageSet_ArrayPromises;
         drawParameters.imageSet = drumsChipImageSet;
 
         //

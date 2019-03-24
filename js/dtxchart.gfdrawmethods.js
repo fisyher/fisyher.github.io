@@ -10,25 +10,26 @@ var DtxChart = (function(mod){
     }
 
     //Preload drum chips image assets
+    var gfChipImageSet_ArrayPromises = [];
     var gfChipImageSet = {};
-    CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/red_gfchip.png", "GFR");
-    CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/green_gfchip.png", "GFG");
-    CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/blue_gfchip.png", "GFB");    
-    CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/yellow_gfchip.png", "GFY");
-    CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/mag_gfchip.png", "GFM");
-    CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/open_gfchip.png", "GFO");
-    CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/open_gfvchip.png", "GFOV");
-    CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/wail_gfchip.png", "GFW");
+    gfChipImageSet_ArrayPromises.push(CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/red_gfchip.png", "GFR"));
+    gfChipImageSet_ArrayPromises.push(CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/green_gfchip.png", "GFG"));
+    gfChipImageSet_ArrayPromises.push(CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/blue_gfchip.png", "GFB"));    
+    gfChipImageSet_ArrayPromises.push(CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/yellow_gfchip.png", "GFY"));
+    gfChipImageSet_ArrayPromises.push(CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/mag_gfchip.png", "GFM"));
+    gfChipImageSet_ArrayPromises.push(CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/open_gfchip.png", "GFO"));
+    gfChipImageSet_ArrayPromises.push(CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/open_gfvchip.png", "GFOV"));
+    gfChipImageSet_ArrayPromises.push(CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/wail_gfchip.png", "GFW"));
 
     //Load Difficulty Word Art
-    CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/BassBasicBannerSmall.png", "bassBasic");
-    CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/BassAdvancedBannerSmall.png", "bassAdvanced");
-    CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/BassExtremeBannerSmall.png", "bassExtreme");
-    CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/BassMasterBannerSmall.png", "bassMaster");
-    CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/GuitarBasicBannerSmall.png", "guitarBasic");
-    CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/GuitarAdvancedBannerSmall.png", "guitarAdvanced");
-    CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/GuitarExtremeBannerSmall.png", "guitarExtreme");
-    CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/GuitarMasterBannerSmall.png", "guitarMaster");
+    gfChipImageSet_ArrayPromises.push(CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/BassBasicBannerSmall.png", "bassBasic"));
+    gfChipImageSet_ArrayPromises.push(CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/BassAdvancedBannerSmall.png", "bassAdvanced"));
+    gfChipImageSet_ArrayPromises.push(CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/BassExtremeBannerSmall.png", "bassExtreme"));
+    gfChipImageSet_ArrayPromises.push(CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/BassMasterBannerSmall.png", "bassMaster"));
+    gfChipImageSet_ArrayPromises.push(CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/GuitarBasicBannerSmall.png", "guitarBasic"));
+    gfChipImageSet_ArrayPromises.push(CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/GuitarAdvancedBannerSmall.png", "guitarAdvanced"));
+    gfChipImageSet_ArrayPromises.push(CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/GuitarExtremeBannerSmall.png", "guitarExtreme"));
+    gfChipImageSet_ArrayPromises.push(CanvasEngine.loadChipImageAssets.call(gfChipImageSet, "assets/images/GuitarMasterBannerSmall.png", "guitarMaster"));
 
     //Width and Height of chips are standard
     var DEFAULT_CHIP_HEIGHT = 5;
@@ -175,6 +176,7 @@ var DtxChart = (function(mod){
         drawParameters.elementIDPrefix = "dtxGF" + bassGuitar;
 
         //Image if available
+        drawParameters.imageSet_promises = gfChipImageSet_ArrayPromises;
         drawParameters.imageSet = gfChipImageSet;
         return drawParameters;
     };
