@@ -1,6 +1,6 @@
 ---
 title: "Network Communication"
-permalink: /docs/Others/
+permalink: /docs/others/
 excerpt: "Test"
 last_modified_at: 2021-09-22T18:48:05+08:00
 toc: true
