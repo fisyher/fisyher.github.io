@@ -11,6 +11,8 @@ docs:
     children:
       - title: "Projects"
         url: /docs/projects/
+      - title: "Links of Interest"
+        url: /docs/links/
       - title: "Others"
         url: /docs/others/
       
