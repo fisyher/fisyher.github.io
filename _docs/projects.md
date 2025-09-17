@@ -9,8 +9,15 @@ toc: false
 
 This website allows user to convert .dtx, .gda files to a static chart image using HTML5 canvas. User can then save the canvas image by right-clicking on the canvas and select "Save as Image".
 
-[DTXCharter](https://fisyher.github.io/dtxcharter)  
+[DTXCharter Site](https://fisyher.github.io/dtxcharter)  
 [Github](https://github.com/fisyher/dtxcharter)
+
+## DTXViewerTool
+
+New version of DTXCharter with new features (WIP)
+
+[DTXViewerTool Site](https://fisyher.github.io/dtxviewertool)
+[Github](https://github.com/fisyher/dtxviewertool)
 
 ## DTXMania NX
 
